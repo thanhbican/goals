@@ -30,6 +30,7 @@ const generateRoll = () => {
   }
   console.log(`Roll: ${roll}`)
   console.log(`Colour: ${rollColor}`)
+  return roll
 }
 
 // generateRoll()

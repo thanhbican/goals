@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-
-
+import { socket } from '../services/socket';
+// console.log(socket)
+socket.connect()
+socket.on('game:countdown-time', (value) => {
+  console.log(value)
+})
+socket.on('game:start-roll', (result: number) => {
+  spin(result)
+})
 const wheelValue = ref('')
 const wheel = ref<HTMLElement | null>(null);
 
-const spin = () => {
-  const outcome = parseInt(wheelValue.value, 10)
+const spin = (outcome: number) => {
+  // const outcome = parseInt(wheelValue.value, 10)
   spinWheel(outcome)
 }
 const initWheel = () => {
