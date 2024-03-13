@@ -3,6 +3,7 @@ import cors from 'cors'
 import express from 'express'
 import { Server } from 'socket.io'
 
+import { gameWaitList } from './services/game'
 import { generateRoll } from './services/roll'
 
 const port = process.env.PORT || 3000
@@ -27,27 +28,16 @@ server.listen(port, () => {
   console.log(`Listening on port ${port}`)
 })
 
-// setInterval(() => {
-//   generateRoll()
-// }, 1000)
-// const clients = {};
-let gameTimer = 3
 io.on('connection', (socket) => {
   // socket.broadcast.emit('game:countdown-time', counter)
   // clients[socket.id] = socket;
   console.log('a user connected')
   // // Broadcast the current counter value to new client
   // socket.broadcast.send(counter)
+  // io.emit('')
 
   // // Update the counter every second and broadcast to all clients
 })
-const gameStart = setInterval((): any => {
-  // console.log(gameTimer)
-  gameTimer--
-  if (gameTimer === 0) {
-    clearInterval(gameStart)
-    io.emit('game:start-roll', generateRoll())
-  } else {
-    io.emit('game:countdown-time', gameTimer)
-  }
-}, 1000)
+
+/** Start game here */
+// gameWaitList({ io })

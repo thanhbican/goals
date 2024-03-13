@@ -90,8 +90,6 @@ onMounted(() => {
     <div class="wheel" ref="wheel"></div>
   </div>
   <div>
-    <input type="text" v-model="wheelValue">
-    <button @click="spin">spin</button>
     <!-- <img src="@/assets/roulette_img.png" alt="roulette"> -->
   </div>
 </template>
