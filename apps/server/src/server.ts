@@ -1,10 +1,12 @@
 import http from 'http'
 import cors from 'cors'
 import express from 'express'
-import { Server } from 'socket.io'
+import { Server, Socket } from 'socket.io'
 
-import { gameWaitList } from './services/game'
-import { generateRoll } from './services/roll'
+import { initChat } from './services/chat'
+
+// import { gameWaitList } from './services/game'
+// import { generateRoll } from './services/roll'
 
 const port = process.env.PORT || 3000
 const corsOptions = {
@@ -37,6 +39,7 @@ io.on('connection', (socket) => {
   // io.emit('')
 
   // // Update the counter every second and broadcast to all clients
+  initChat({ socket })
 })
 
 /** Start game here */

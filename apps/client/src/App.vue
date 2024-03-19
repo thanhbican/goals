@@ -5,10 +5,10 @@ import Chat from './components/Chat.vue';
 
 <template>
   <div class="flex">
-    <aside class="h-screen min-w-[350px] m-w-[375px] bg-white border-r">
+    <aside class="h-screen flex-shrink min-w-[350px] m-w-[375px] bg-white border-r">
       <Chat />
     </aside>
-    <div class="flex-1">
+    <div class="flex-1 overflow-hidden">
       <Roulette />
     </div>
   </div>

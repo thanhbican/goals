@@ -1,5 +1,27 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { socket } from '../services/socket';
 
+
+const chatValue = ref('')
+
+const onChat = async () => {
+  const payload = {
+    content: chatValue.value
+  }
+  const res = await socket.emitWithAck("chat:send", payload);
+  console.log(res.status)
+  // socket.emit('chat:send', {
+  //   content: chatValue.value
+  // })
+}
+
+socket.on('chat:sent', (message) => {
+  console.log(message)
+})
+// const onReceive = () => {
+
+// }
 </script>
 <template>
   <section class="section-chat">
@@ -11,7 +33,7 @@
       </ul>
 
       <div>
-        <input type="text" placeholder="Type Message">
+        <input type="text" placeholder="Type Message" v-model="chatValue" @keyup.enter="onChat">
       </div>
     </div>
   </section>
