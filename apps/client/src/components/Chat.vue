@@ -33,7 +33,7 @@ socket.on('chat:sent', (message) => {
       </ul>
 
       <div>
-        <input type="text" placeholder="Type Message" v-model="chatValue" @keyup.enter="onChat">
+        <input type="text" placeholder="Type message" className="input w-full max-w-xs" />
       </div>
     </div>
   </section>

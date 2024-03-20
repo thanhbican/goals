@@ -96,11 +96,11 @@ onMounted(() => {
 
 
 <style lang="sass">
-*
-  box-sizing: border-box
-body
-  font-family: 'Titillium Web', sans-serif
-  background: #191B28
+// *
+  // box-sizing: border-box
+// body
+  // font-family: 'Titillium Web', sans-serif
+  // background: #191B28
 
 .roulette-wrapper
   position: relative
