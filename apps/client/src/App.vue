@@ -1,18 +1,11 @@
 <script setup lang="ts">
-import Roulette from './components/Roulette.vue';
-import Chat from './components/Chat.vue';
+import Chat from './components/Chat.vue'
+import Roulette from './components/Roulette.vue'
 </script>
 
 <template>
-  <div class="flex" data-theme="dark">
-    <aside class="h-screen flex-shrink min-w-[350px] m-w-[375px] bg-white border-r">
-      <Chat />
-    </aside>
-
-    <div class="flex-1 overflow-hidden">
-      <Roulette />
-    </div>
+  <div class="flex h-screen" data-theme="dark">
+    <Chat />
+    <Roulette />
   </div>
-
-
 </template>

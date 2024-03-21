@@ -1,42 +1,47 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { socket } from '../services/socket';
+import { reactive, ref } from 'vue'
 
+import { socket } from '../services/socket'
 
 const chatValue = ref('')
+const chats: any = reactive([])
 
 const onChat = async () => {
   const payload = {
-    content: chatValue.value
+    content: chatValue.value,
   }
-  const res = await socket.emitWithAck("chat:send", payload);
-  console.log(res.status)
-  // socket.emit('chat:send', {
-  //   content: chatValue.value
-  // })
+  const res = await socket.emitWithAck('chat:send', payload)
+  chats.push(res.data.message)
+
+  //clear input
+  chatValue.value = ''
 }
 
 socket.on('chat:sent', (message) => {
-  console.log(message)
+  chats.push(message)
 })
-// const onReceive = () => {
-
-// }
 </script>
 <template>
-  <section class="section-chat">
-    <div class="wrapper">
-      <h1>1 online</h1>
-
-      <ul class="chat-list">
-        <li>Sam: abc</li>
-      </ul>
-
-      <div>
-        <input type="text" placeholder="Type message" className="input w-full max-w-xs" />
-      </div>
+  <aside class="flex h-full flex-col flex-nowrap w-[250px] px-4">
+    <div class="h-12 text-right">
+      <h1 class="ml-auto text-lg">2</h1>
     </div>
-  </section>
+    <ul class="h-full flex-1">
+      <li v-for="(chat, index) in chats" :key="index">
+        {{ chat.from }}: {{ chat.content }}
+      </li>
+    </ul>
+
+    <div>
+      <input
+        v-model="chatValue"
+        type="text"
+        placeholder="Type message"
+        className="input w-full border-white"
+        @keyup.enter="onChat"
+      />
+    </div>
+  </aside>
 </template>
 
 <style lang="sass">
