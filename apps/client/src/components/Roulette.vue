@@ -85,14 +85,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex-1 overflow-hidden">
-    <div class="roulette-wrapper">
-      <div class="selector"></div>
-      <div class="wheel" ref="wheel"></div>
-    </div>
-    <div>
-      <!-- <img src="@/assets/roulette_img.png" alt="roulette"> -->
-    </div>
+  <div class="roulette-wrapper">
+    <div class="selector"></div>
+    <div class="wheel" ref="wheel"></div>
+  </div>
+  <div>
+    <!-- <img src="@/assets/roulette_img.png" alt="roulette"> -->
   </div>
 </template>
 
