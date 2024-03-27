@@ -1,46 +1,57 @@
 import { GameSocket } from '../types/game'
 import { generateRoll } from './roll'
 
-// setInterval
-let gameId: any
-let timer = 5
+let intervalId: NodeJS.Timeout | null = null
+let startTime: number | null = null
+const timerDuration = 5000 // 5 seconds in milliseconds
+const updateInterval = 10 // 10 milliseconds for smoother updates
 
 const gameStart = ({ io }: GameSocket) => {
-  console.log(timer)
-  timer--
-  if (timer === 0) {
+  io.emit('game:start-game')
+  if (!startTime) {
+    startTime = Date.now()
+  }
+
+  const currentTime = Date.now()
+  const elapsed = currentTime - startTime
+
+  let timer = timerDuration - elapsed
+  if (timer <= 0) {
+    io.emit('game:countdown-time', 0)
     gameEnd()
     io.emit('game:start-roll', generateRoll())
 
-    // progress
     setTimeout(() => {
       gameAwards({ io })
-    }, 3000)
+    }, 6000) // Delay for 6 seconds for game awards
   } else {
-    io.emit('game:countdown-time', timer)
+    const formattedTimer = (timer / 1000).toFixed(2) // Convert to seconds with two decimal places
+    io.emit('game:countdown-time', formattedTimer)
   }
 }
 
 const gameEnd = () => {
-  clearInterval(gameId)
+  if (intervalId !== null) {
+    clearInterval(intervalId)
+    intervalId = null
+    startTime = null
+  }
 }
 
-const gameRolling = () => {}
-
 const gameAwards = ({ io }: GameSocket) => {
-  // progress
-
   gameRestart({ io })
 }
 
 const gameRestart = ({ io }: GameSocket) => {
-  timer = 15
   gameWaitList({ io })
 }
+
 const gameWaitList = ({ io }: GameSocket) => {
-  gameId = setInterval(() => {
-    gameStart({ io })
-  }, 1000)
+  if (intervalId === null) {
+    intervalId = setInterval(() => {
+      gameStart({ io })
+    }, updateInterval)
+  }
 }
 
 export { gameWaitList }

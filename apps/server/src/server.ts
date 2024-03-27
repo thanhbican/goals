@@ -4,8 +4,8 @@ import express from 'express'
 import { Server, Socket } from 'socket.io'
 
 import { initChat } from './services/chat'
+import { gameWaitList } from './services/game'
 
-// import { gameWaitList } from './services/game'
 // import { generateRoll } from './services/roll'
 
 const port = process.env.PORT || 3000

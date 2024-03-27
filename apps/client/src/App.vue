@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Chat from './components/Chat.vue'
 import GameAmount from './components/GameAmount.vue'
+import GameBoard from './components/GameBoard.vue'
 import Roulette from './components/Roulette.vue'
 </script>
 
@@ -10,6 +11,7 @@ import Roulette from './components/Roulette.vue'
     <div class="flex-1 overflow-hidden">
       <Roulette />
       <GameAmount />
+      <GameBoard />
     </div>
   </div>
 </template>

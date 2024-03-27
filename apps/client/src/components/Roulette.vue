@@ -3,16 +3,21 @@ import { onMounted, ref } from 'vue'
 
 import { socket } from '../services/socket'
 
-// console.log(socket)
+const wheel = ref<HTMLElement | null>(null)
+const timer = ref('0')
+const isTimerCount = ref(true)
+
 socket.connect()
+socket.on('game:start-game', () => {
+  isTimerCount.value = true
+})
 socket.on('game:countdown-time', (value) => {
-  console.log(value)
+  timer.value = value
 })
 socket.on('game:start-roll', (result: number) => {
+  isTimerCount.value = false
   spin(result)
 })
-const wheelValue = ref('')
-const wheel = ref<HTMLElement | null>(null)
 
 const spin = (outcome: number) => {
   // const outcome = parseInt(wheelValue.value, 10)
@@ -86,8 +91,18 @@ onMounted(() => {
 
 <template>
   <div class="roulette-wrapper">
+    <div
+      v-show="isTimerCount"
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-2xl z-10"
+    >
+      {{ timer }}
+    </div>
     <div class="selector"></div>
-    <div class="wheel" ref="wheel"></div>
+    <div
+      class="wheel"
+      :class="{ 'bg-black opacity-20': isTimerCount }"
+      ref="wheel"
+    ></div>
   </div>
   <div>
     <!-- <img src="@/assets/roulette_img.png" alt="roulette"> -->
@@ -103,7 +118,6 @@ onMounted(() => {
 
 .roulette-wrapper
   position: relative
-  display: flex
   justify-content: center
   width: 100%
   margin: 0 auto
@@ -111,7 +125,7 @@ onMounted(() => {
 
   & .selector
     width: 3px
-    background: grey
+    background: red
     left: 50%
     height: 100%
     transform: translate(-50%,0%)
