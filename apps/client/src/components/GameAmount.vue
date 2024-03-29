@@ -1,4 +1,5 @@
 <template>
+  <h1>Balance: {{ state.userBalance }}</h1>
   <div class="grid grid-cols-12">
     <div class="col-span-4">
       <label class="input input-bordered flex items-center gap-2">
@@ -9,7 +10,7 @@
         />
       </label>
     </div>
-    <div class="col-span-8">
+    <div class="col-span-8 space-x-4">
       <button @click="clearBetAmount">CLEAR</button>
       <button
         v-for="increment in state.increments"
@@ -21,26 +22,51 @@
       <button @click="halfBetAmount">1/2</button>
       <button @click="doubleBetAmount">x2</button>
       <button @click="maxBetAmount">Max</button>
+      {{ gameStore.amount }}
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { roundMoney } from '@/helper/util'
+import { useGameStore } from '@/store/game'
+import { useUserStore } from '@/store/user'
+import { ref, watchEffect } from 'vue'
 
 interface BetState {
   betAmount: number | null
-  accountAmount: number
+  userBalance: number
   increments: number[]
 }
 
 const initialState: BetState = {
   betAmount: null,
-  accountAmount: 1000,
+  userBalance: 0,
   increments: [0.01, 0.1, 1, 10, 100],
 }
 
+const gameStore = useGameStore()
+const userStore = useUserStore()
+
 const state = ref<BetState>({ ...initialState })
+
+watchEffect(() => {
+  // Whenever state.betAmount changes, update gameStore.amount
+  if (gameStore.amount && gameStore.amount > userStore.balance) {
+    state.value.betAmount = userStore.balance
+  }
+  if (state.value.betAmount !== null) {
+    state.value.betAmount = Math.min(
+      state.value.betAmount,
+      state.value.userBalance
+    )
+    gameStore.changeAmount(state.value.betAmount)
+  }
+
+  if (userStore.balance >= 0) {
+    state.value.userBalance = userStore.balance
+  }
+})
 
 const clearBetAmount = () => {
   state.value.betAmount = 0
@@ -53,30 +79,30 @@ const changeBetAmount = (amount: number) => {
   const newAmount = Math.round((state.value.betAmount + amount) * 100) / 100
   state.value.betAmount = Math.max(
     0.01,
-    Math.min(newAmount, state.value.accountAmount)
+    Math.min(newAmount, state.value.userBalance)
   )
 }
 
 const halfBetAmount = () => {
-  if (state.value.betAmount !== null) {
+  if (state.value.betAmount) {
     state.value.betAmount = Math.max(
       0.01,
-      Math.round((state.value.betAmount / 2) * 100) / 100
+      roundMoney(state.value.betAmount / 2)
     )
   }
 }
 
 const doubleBetAmount = () => {
-  if (state.value.betAmount !== null) {
+  if (state.value.betAmount) {
     state.value.betAmount = Math.max(
       0.01,
-      Math.round(state.value.betAmount * 2 * 100) / 100
+      roundMoney(state.value.betAmount * 2)
     )
   }
 }
 
 const maxBetAmount = () => {
-  state.value.betAmount = state.value.accountAmount
+  state.value.betAmount = state.value.userBalance
 }
 </script>
 

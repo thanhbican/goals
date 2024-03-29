@@ -8,7 +8,7 @@ import Roulette from './components/Roulette.vue'
 <template>
   <div class="flex h-screen" data-theme="dark">
     <Chat />
-    <div class="flex-1 overflow-hidden">
+    <div class="flex-1 overflow-hidden select-none">
       <Roulette />
       <GameAmount />
       <GameBoard />
