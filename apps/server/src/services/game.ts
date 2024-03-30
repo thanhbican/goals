@@ -6,8 +6,12 @@ let startTime: number | null = null
 const timerDuration = 5000 // 5 seconds in milliseconds
 const updateInterval = 10 // 10 milliseconds for smoother updates
 
+const players: any = []
+const places = ['black', 'green', 'red']
+
 const gameStart = ({ io }: GameSocket) => {
   io.emit('game:start-game')
+
   if (!startTime) {
     startTime = Date.now()
   }
@@ -46,12 +50,40 @@ const gameRestart = ({ io }: GameSocket) => {
   gameWaitList({ io })
 }
 
-const gameWaitList = ({ io }: GameSocket) => {
-  if (intervalId === null) {
-    intervalId = setInterval(() => {
-      gameStart({ io })
-    }, updateInterval)
-  }
+const gameWaitList = ({ io, socket }: GameSocket) => {
+  io.on('connection', (socket) => {
+    socket?.on('game:choose', (answer) => {
+      let player = players.find((p: any) => p.id === socket.id)
+      if (!player) {
+        players.push({ id: socket.id, ...answer })
+      } else {
+        // Assuming 'answer' is an object with properties you want to update in 'player'
+        Object.assign(player, answer)
+      }
+
+      io.emit('game:choose-list', convert(players))
+    })
+    io.emit('game:choose-list', convert(players))
+  })
+  // if (intervalId === null) {
+  //   intervalId = setInterval(() => {
+  //     gameStart({ io })
+  //   }, updateInterval)
+  // }
+}
+
+const convert = (arr: any) => {
+  const result: any = { black: [], green: [], red: [] }
+
+  arr.forEach((item: any) => {
+    Object.keys(result).forEach((color: any) => {
+      if (item[color]) {
+        result[color].push({ id: item.id, amount: item[color] })
+      }
+    })
+  })
+
+  return result
 }
 
 export { gameWaitList }

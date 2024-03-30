@@ -7,7 +7,6 @@ const wheel = ref<HTMLElement | null>(null)
 const timer = ref('0')
 const isTimerCount = ref(true)
 
-socket.connect()
 socket.on('game:start-game', () => {
   isTimerCount.value = true
 })

@@ -7,7 +7,14 @@
       @click="bet(place)"
     >
       {{ place }}
-      <h1>{{ betAmounts[place] }}</h1>
+      <!-- <h1>{{ betAmounts[place] }}</h1> -->
+      <!-- <ul v-for="player in playerList"> -->
+      <ul>
+        <li v-for="player in playerList[place]">
+          {{ player.id }} : {{ player.amount }}
+        </li>
+      </ul>
+      <!-- </ul> -->
     </div>
   </div>
 </template>
@@ -18,6 +25,8 @@ import { useGameStore } from '@/store/game'
 import { useUserStore } from '@/store/user'
 import { ref } from 'vue'
 
+import { socket } from '../services/socket'
+
 const gameStore = useGameStore()
 const userStore = useUserStore()
 const betAmounts = ref<{ [key: string]: number }>({
@@ -26,8 +35,15 @@ const betAmounts = ref<{ [key: string]: number }>({
   green: 0,
   red: 0,
 })
+const playerList: any = ref([])
+
+socket.on('game:choose-list', (players) => {
+  console.log('aaa')
+  playerList.value = players
+})
 
 const places = ['black', 'green', 'red']
+// const result = { black: [], green: [], red: [] }
 
 const bet = (place: string) => {
   if (gameStore.amount && gameStore.amount <= userStore.balance) {
@@ -35,6 +51,8 @@ const bet = (place: string) => {
       gameStore.amount + betAmounts.value[place]
     ) // Update the bet amount for the selected place
     userStore.changeBalance(-gameStore.amount)
+
+    socket.emit('game:choose', betAmounts.value)
   }
 }
 </script>

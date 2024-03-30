@@ -42,5 +42,5 @@ io.on('connection', (socket) => {
   initChat({ socket })
 })
 
+gameWaitList({ io })
 /** Start game here */
-// gameWaitList({ io })
