@@ -1,10 +1,15 @@
 import http from 'http'
+import { json } from 'body-parser'
 import cors from 'cors'
 import express from 'express'
 import { Server, Socket } from 'socket.io'
 
 import { initChat } from './services/chat'
 import { gameWaitList } from './services/game'
+
+import 'express-async-errors'
+
+import { errorHandler } from './errors/errorHandler'
 
 // import { generateRoll } from './services/roll'
 
@@ -20,7 +25,9 @@ const io = new Server(server, {
   cors: corsOptions,
 })
 
+app.use(json)
 app.use(cors(corsOptions))
+app.use(errorHandler)
 
 app.get('/', (req, res) => {
   res.send(200).json('ok')

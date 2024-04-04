@@ -7,7 +7,6 @@ const timerDuration = 5000 // 5 seconds in milliseconds
 const updateInterval = 10 // 10 milliseconds for smoother updates
 
 const players: any = []
-const places = ['black', 'green', 'red']
 
 const gameStart = ({ io }: GameSocket) => {
   io.emit('game:start-game')
