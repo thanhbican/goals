@@ -1,8 +1,14 @@
-import express from 'express'
+import express, { Router } from 'express'
 
-const router = express.Router()
+import { login, logout } from '../controllers/auth'
 
-router.get('auth/user')
+const router = express.Router() as Router
+
+router.get('/auth/user', (req, res) => {
+  res.send('a')
+})
 router.post('auth/signin')
-router.post('auth/login')
-router.post('auth/logout')
+router.post('auth/login', login)
+router.post('auth/logout', logout)
+
+export { router as authRouter }

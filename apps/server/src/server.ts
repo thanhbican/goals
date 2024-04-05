@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 import http from 'http'
 import { json } from 'body-parser'
 import cors from 'cors'
@@ -9,7 +11,10 @@ import { gameWaitList } from './services/game'
 
 import 'express-async-errors'
 
+import cookieSession from 'cookie-session'
+
 import { errorHandler } from './errors/errorHandler'
+import { authRouter } from './routers/auth'
 
 // import { generateRoll } from './services/roll'
 
@@ -25,12 +30,20 @@ const io = new Server(server, {
   cors: corsOptions,
 })
 
-app.use(json)
+app.set('trust proxy', 1) // trust first proxy
+app.use(json())
+app.use(
+  cookieSession({
+    signed: false,
+    secure: true,
+  })
+)
 app.use(cors(corsOptions))
 app.use(errorHandler)
 
+app.use('/api', authRouter)
 app.get('/', (req, res) => {
-  res.send(200).json('ok')
+  res.status(200).send('ok')
 })
 
 server.listen(port, () => {
@@ -49,5 +62,5 @@ io.on('connection', (socket) => {
   initChat({ socket })
 })
 
-gameWaitList({ io })
+// gameWaitList({ io })
 /** Start game here */

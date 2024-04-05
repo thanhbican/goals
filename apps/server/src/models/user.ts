@@ -2,9 +2,15 @@ import { model, Schema } from 'mongoose'
 
 const userSchema = new Schema(
   {
-    email: String,
-    password: String,
-    username: String,
+    password: {
+      type: String,
+      required: true, // Makes the password field required
+    },
+    username: {
+      type: String,
+      unique: true,
+      required: true,
+    },
   },
   { _id: false, id: true, timestamps: true }
 )
