@@ -13,7 +13,7 @@ import 'express-async-errors'
 
 import cookieSession from 'cookie-session'
 
-import { errorHandler } from './errors/errorHandler'
+import { errorHandler } from './middlewares/errorHandler'
 import { authRouter } from './routers/auth'
 
 // import { generateRoll } from './services/roll'
@@ -39,9 +39,10 @@ app.use(
   })
 )
 app.use(cors(corsOptions))
-app.use(errorHandler)
 
 app.use('/api', authRouter)
+app.use(errorHandler)
+
 app.get('/', (req, res) => {
   res.status(200).send('ok')
 })

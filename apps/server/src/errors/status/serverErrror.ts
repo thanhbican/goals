@@ -1,8 +1,11 @@
 import { CustomError } from '../customError'
 
 export class SeverError extends CustomError {
+  status = 500
   constructor(message = 'Sever error') {
-    super(500, message)
+    super(message)
+
+    Object.setPrototypeOf(this, SeverError.prototype)
   }
   serializeErrors() {
     return [{ message: this.message }]
