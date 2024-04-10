@@ -12,6 +12,7 @@ import { gameWaitList } from './services/game'
 import 'express-async-errors'
 
 import cookieSession from 'cookie-session'
+import morgan from 'morgan'
 
 import { errorHandler } from './middlewares/errorHandler'
 import { authRouter } from './routers/auth'
@@ -38,6 +39,7 @@ app.use(
     secure: true,
   })
 )
+app.use(morgan('dev'))
 app.use(cors(corsOptions))
 
 app.use('/api', authRouter)
