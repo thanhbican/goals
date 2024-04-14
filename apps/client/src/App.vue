@@ -6,7 +6,7 @@ import Header from './components/layout/Header.vue'
 import Roulette from './components/Roulette.vue'
 import { socket } from './services/socket'
 
-socket.connect()
+// socket.connect()
 </script>
 
 <template>

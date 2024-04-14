@@ -17,7 +17,16 @@ const signIn = async (req: Request, res: Response) => {
 
   const newUser = await User.create({ username, password: hashedPassword })
 
-  res.status(200).send({ id: newUser.id, username: newUser.username })
+  const payload = {
+    id: newUser.id,
+    username: newUser.username,
+    balance: newUser.balance,
+  }
+
+  const jwtToken = jwt.sign(payload, process.env.JWT_TOKEN!)
+  req.session = { jwt: jwtToken }
+
+  res.status(200).send(payload)
 }
 
 const login = async (req: Request, res: Response) => {
@@ -36,6 +45,7 @@ const login = async (req: Request, res: Response) => {
   const payload = {
     id: existUser.id,
     username: existUser.username,
+    balance: existUser.balance,
   }
 
   const jwtToken = jwt.sign(payload, process.env.JWT_TOKEN!)

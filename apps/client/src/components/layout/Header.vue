@@ -1,67 +1,26 @@
 <template>
   <header>
-    <button class="btn btn-success" onclick="singInModal.showModal()">
-      Sign In
-    </button>
-    <dialog id="singInModal" class="modal">
-      <div class="modal-box">
-        <div class="tabs">
-          <a
-            class="tab tab-bordered"
-            :class="{ 'tab-active': activeTab === 'login' }"
-            @click="activeTab = 'login'"
-            >Login</a
-          >
-          <a
-            class="tab tab-bordered"
-            :class="{ 'tab-active': activeTab === 'signIn' }"
-            @click="activeTab = 'signIn'"
-            >Sign In</a
-          >
-        </div>
+    <!-- If user is logged in, show UserInfo component -->
+    <div v-if="userStore.isUserLoggedIn">
+      <UserInfo :user="userStore.$state" />
+    </div>
 
-        <Form @submit="onSubmit" :validation-schema="validationSchema">
-          <Field name="username" placeholder="Username" />
-          <ErrorMessage name="username" />
-
-          <Field
-            name="password"
-            as="input"
-            type="password"
-            placeholder="Password"
-          />
-          <ErrorMessage name="password" />
-
-          <div v-if="activeTab === 'signIn'">
-            <button type="submit">Sign In</button>
-          </div>
-          <div v-if="activeTab === 'login'">
-            <button type="submit">Login In</button>
-          </div>
-        </Form>
-      </div>
-    </dialog>
+    <!-- Otherwise, show Auth component -->
+    <AuthModal v-else />
   </header>
 </template>
 
 <script setup lang="ts">
-import userApi from '@/api/userApi'
-import { userSchema, UserSchema } from '@/schemas/userSchema'
-import { toTypedSchema } from '@vee-validate/zod'
-import { ErrorMessage, Field, Form, useForm } from 'vee-validate'
-import { computed, ref } from 'vue'
+import { useUserStore } from '@/store/user'
+import { onMounted } from 'vue'
 
-const activeTab = ref('signIn')
+import AuthModal from '../user/AuthModal.vue'
+import UserInfo from '../user/UserInfo.vue'
 
-const validationSchema = toTypedSchema(userSchema)
+const userStore = useUserStore()
 
-const onSubmit = async (payload: UserSchema) => {
-  try {
-    await userApi.signIn(payload)
-  } catch (err) {
-    console.error(err)
-  }
-}
+onMounted(() => {
+  //first load
+  userStore.getUser()
+})
 </script>
-
-<style lang="scss" scoped></style>
