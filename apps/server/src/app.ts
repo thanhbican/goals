@@ -7,8 +7,10 @@ import express, { Express } from 'express'
 import 'express-async-errors'
 
 import cookieSession from 'cookie-session'
+import helmet from 'helmet'
 import morgan from 'morgan'
 
+import { currentUser } from './middlewares/currentUser'
 import { errorHandler } from './middlewares/errorHandler'
 import { authRouter } from './routers/auth'
 import { corsOptions } from './utils/cors'
@@ -24,8 +26,10 @@ app.use(
   })
 )
 app.use(morgan('dev'))
+app.use(helmet())
 app.use(cors(corsOptions))
 
+app.use(currentUser)
 app.use('/api', authRouter)
 app.use(errorHandler)
 

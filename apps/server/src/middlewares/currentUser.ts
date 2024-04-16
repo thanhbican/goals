@@ -17,7 +17,7 @@ declare global {
 
 const currentUser = (req: Request, res: Response, next: NextFunction) => {
   if (!req?.session?.jwt) {
-    throw new NotAuthError()
+    return next()
   }
 
   const token = req.session.jwt
@@ -27,7 +27,6 @@ const currentUser = (req: Request, res: Response, next: NextFunction) => {
     req.currentUser = payload
   } catch (err) {
     console.error(err)
-    throw new NotAuthError()
   }
 
   next()

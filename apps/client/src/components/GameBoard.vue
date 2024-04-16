@@ -38,7 +38,6 @@ const betAmounts = ref<{ [key: string]: number }>({
 const playerList: any = ref([])
 
 socket.on('game:choose-list', (players) => {
-  console.log('aaa')
   playerList.value = players
 })
 
