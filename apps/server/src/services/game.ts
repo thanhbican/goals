@@ -1,4 +1,8 @@
+import { IncomingMessage } from 'http'
+import { Request } from 'express'
+
 import { GameSocket } from '../types/game'
+import { UserPayload } from '../types/user'
 import { generateRoll } from './roll'
 
 let intervalId: NodeJS.Timeout | null = null
@@ -8,7 +12,10 @@ const updateInterval = 10 // 10 milliseconds for smoother updates
 
 const players: any = []
 
+let isBetEnabled = false
+
 const gameStart = ({ io }: GameSocket) => {
+  isBetEnabled = true
   io.emit('game:start-game')
 
   if (!startTime) {
@@ -34,6 +41,7 @@ const gameStart = ({ io }: GameSocket) => {
 }
 
 const gameEnd = () => {
+  isBetEnabled = false
   if (intervalId !== null) {
     clearInterval(intervalId)
     intervalId = null
@@ -52,11 +60,16 @@ const gameRestart = ({ io }: GameSocket) => {
 const gameWaitList = ({ io, socket }: GameSocket) => {
   io.on('connection', (socket) => {
     socket?.on('game:choose', (answer) => {
-      let player = players.find((p: any) => p.id === socket.id)
+      if (!isBetEnabled) return
+
+      const request = socket.request as Request
+      const currentUser = request.currentUser
+      if (!currentUser) return
+
+      let player = players.find((p: any) => p.username === currentUser.username)
       if (!player) {
-        players.push({ id: socket.id, ...answer })
+        players.push({ username: currentUser.username, ...answer })
       } else {
-        // Assuming 'answer' is an object with properties you want to update in 'player'
         Object.assign(player, answer)
       }
 
@@ -64,6 +77,7 @@ const gameWaitList = ({ io, socket }: GameSocket) => {
     })
     io.emit('game:choose-list', convert(players))
   })
+
   // if (intervalId === null) {
   //   intervalId = setInterval(() => {
   //     gameStart({ io })
@@ -77,7 +91,7 @@ const convert = (arr: any) => {
   arr.forEach((item: any) => {
     Object.keys(result).forEach((color: any) => {
       if (item[color]) {
-        result[color].push({ id: item.id, amount: item[color] })
+        result[color].push({ username: item.username, amount: item[color] })
       }
     })
   })

@@ -7,13 +7,18 @@
 
 <script setup lang="ts">
 import userApi from '@/api/userApi'
+import { socket } from '@/services/socket'
+import { useUserStore } from '@/store/user'
 
 import { User } from '@/types/user'
 
 defineProps<{ user: User }>()
+const userStore = useUserStore()
 
-const logout = () => {
-  userApi.logout()
+const logout = async () => {
+  await userApi.logout()
+  socket.disconnect().connect()
+  userStore.resetUser()
 }
 </script>
 

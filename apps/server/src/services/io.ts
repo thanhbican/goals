@@ -21,12 +21,10 @@ const initIo = (
       secure: process.env.NODE_ENV !== 'dev',
     })
   )
-  // io.engine.use(currentUser)
-  // io.engine.use(helmet())
+  io.engine.use(currentUser)
+  io.engine.use(helmet())
 
   io.on('connection', (socket) => {
-    console.log('a user connected')
-
     initChat({ socket })
   })
 

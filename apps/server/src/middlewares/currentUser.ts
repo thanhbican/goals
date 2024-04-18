@@ -1,19 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 
-import { NotAuthError } from '../errors/status/notAuthError'
 import { UserPayload } from '../types/user'
-
-declare global {
-  namespace Express {
-    interface Request {
-      currentUser?: UserPayload
-      session: {
-        jwt?: string
-      } | null
-    }
-  }
-}
 
 const currentUser = (req: Request, res: Response, next: NextFunction) => {
   if (!req?.session?.jwt) {

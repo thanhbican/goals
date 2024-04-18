@@ -30,7 +30,7 @@
         <span>{{ errors.password }}</span>
 
         <div v-if="activeTab === 'signup'">
-          <button type="submit">Sign In</button>
+          <button type="submit">Sign up</button>
         </div>
         <div v-if="activeTab === 'login'">
           <button type="submit">Login In</button>
@@ -43,6 +43,7 @@
 <script setup lang="ts">
 import userApi from '@/api/userApi'
 import { userSchema } from '@/schemas/userSchema'
+import { socket } from '@/services/socket'
 import { useUserStore } from '@/store/user'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
@@ -70,6 +71,7 @@ const onSubmit = handleSubmit(async (values) => {
       await userApi.login(values)
       authModal.value?.close()
     }
+    socket.disconnect().connect()
     await userStore.getUser()
   } catch (err) {
     console.error(err)

@@ -1,4 +1,4 @@
-import http from 'http'
+import { createServer } from 'node:http'
 import mongoose from 'mongoose'
 
 import { app } from './app'
@@ -11,7 +11,7 @@ const startServer = async () => {
   try {
     await mongoose.connect('mongodb://127.0.0.1:27017/goals')
 
-    const server = http.createServer(app)
+    const server = createServer(app)
 
     server.listen(port, () => {
       console.log('Listening 3000')

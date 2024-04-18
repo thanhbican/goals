@@ -13,6 +13,7 @@ import morgan from 'morgan'
 import { currentUser } from './middlewares/currentUser'
 import { errorHandler } from './middlewares/errorHandler'
 import { authRouter } from './routers/auth'
+import { UserPayload } from './types/user'
 import { corsOptions } from './utils/cors'
 
 const app = express() as Express

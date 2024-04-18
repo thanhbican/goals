@@ -16,6 +16,7 @@ const generateRoll = () => {
   count += 1
   const round = count + ''
   console.log(round)
+  console.log(serverSeed)
   const hash = sha256(serverSeed + '-' + publicSeed + '-' + round)
   const roll = parseInt(hash.substring(0, 8), 16) % 15
 
@@ -33,7 +34,7 @@ const generateRoll = () => {
   return roll
 }
 
-// generateRoll()
+generateSeed()
 // Schedule the task to run every day at 00:00
 cron.schedule('0 0 * * *', generateSeed)
 // cron.schedule('*/5 * * * * *', generateRoll)

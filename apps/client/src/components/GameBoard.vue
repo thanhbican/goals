@@ -1,9 +1,10 @@
 <template>
   <div class="grid grid-cols-12">
-    <div
+    <button
       v-for="place in places"
       :key="place"
       class="col-span-3"
+      :disabled="isBetEnabled"
       @click="bet(place)"
     >
       {{ place }}
@@ -11,11 +12,11 @@
       <!-- <ul v-for="player in playerList"> -->
       <ul>
         <li v-for="player in playerList[place]">
-          {{ player.id }} : {{ player.amount }}
+          {{ player.username }} : {{ player.amount }}
         </li>
       </ul>
       <!-- </ul> -->
-    </div>
+    </button>
   </div>
 </template>
 
@@ -36,7 +37,13 @@ const betAmounts = ref<{ [key: string]: number }>({
   red: 0,
 })
 const playerList: any = ref([])
-
+const isBetEnabled = ref(true)
+socket.on('game:start-game', () => {
+  isBetEnabled.value = false
+})
+socket.on('game:start-roll', () => {
+  isBetEnabled.value = true
+})
 socket.on('game:choose-list', (players) => {
   playerList.value = players
 })
