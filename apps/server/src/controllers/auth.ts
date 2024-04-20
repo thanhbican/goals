@@ -20,7 +20,6 @@ const signIn = async (req: Request, res: Response) => {
   const payload = {
     id: newUser.id,
     username: newUser.username,
-    balance: newUser.balance,
   }
 
   const jwtToken = jwt.sign(payload, process.env.JWT_TOKEN!)
@@ -45,7 +44,6 @@ const login = async (req: Request, res: Response) => {
   const payload = {
     id: existUser.id,
     username: existUser.username,
-    balance: existUser.balance,
   }
 
   const jwtToken = jwt.sign(payload, process.env.JWT_TOKEN!)

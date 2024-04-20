@@ -6,7 +6,7 @@ import { Server } from 'socket.io'
 import { currentUser } from '../middlewares/currentUser'
 import { corsOptions } from '../utils/cors'
 import { initChat } from './chat'
-import { gameWaitList } from './game'
+import { initGame } from './game'
 
 const initIo = (
   server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>
@@ -24,12 +24,13 @@ const initIo = (
   io.engine.use(currentUser)
   io.engine.use(helmet())
 
+  /** Start game here */
+  initGame({ io })
+
+  /** Client connect */
   io.on('connection', (socket) => {
     initChat({ socket })
   })
-
-  /** Start game here */
-  gameWaitList({ io })
 }
 
 export { initIo }

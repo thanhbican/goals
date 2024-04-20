@@ -1,18 +1,21 @@
 <template>
-  <div class="grid grid-cols-12">
+  <div class="grid grid-cols-12 gap-4">
     <button
       v-for="place in places"
       :key="place"
-      class="col-span-3"
-      :disabled="isBetEnabled"
+      class="col-span-3 border border-white"
+      :disabled="!isBetEnabled"
       @click="bet(place)"
     >
       {{ place }}
-      <!-- <h1>{{ betAmounts[place] }}</h1> -->
-      <!-- <ul v-for="player in playerList"> -->
+
+      <div class="flex justify-between items-center">
+        <h2>{{ betPlayersTotal[place]?.length }} bets in totals</h2>
+        <p>{{ betPlayersTotal[place]?.totals || 0 }}</p>
+      </div>
       <ul>
-        <li v-for="player in playerList[place]">
-          {{ player.username }} : {{ player.amount }}
+        <li v-for="player in betPlayers[place]">
+          {{ player.username }} : {{ player.betAmount }}
         </li>
       </ul>
       <!-- </ul> -->
@@ -24,43 +27,64 @@
 import { roundMoney } from '@/helper/util'
 import { useGameStore } from '@/store/game'
 import { useUserStore } from '@/store/user'
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 import { socket } from '../services/socket'
 
+// store
 const gameStore = useGameStore()
 const userStore = useUserStore()
-const betAmounts = ref<{ [key: string]: number }>({
-  // Define a reactive object to store bet amounts for each place
-  black: 0,
-  green: 0,
-  red: 0,
-})
-const playerList: any = ref([])
-const isBetEnabled = ref(true)
-socket.on('game:start-game', () => {
-  isBetEnabled.value = false
-})
-socket.on('game:start-roll', () => {
+
+// variable
+const places = ['black', 'green', 'red']
+const betPlayers: any = ref([])
+const isBetEnabled = ref(false)
+
+// socket
+socket.on('game:waiting', ({ betList }) => {
+  betPlayers.value = betList
   isBetEnabled.value = true
 })
-socket.on('game:choose-list', (players) => {
-  playerList.value = players
+socket.on('game:rolling', () => {
+  isBetEnabled.value = false
+})
+socket.on('game:choosing', ({ betList }) => {
+  betPlayers.value = betList
+})
+socket.on('game:balance-after-choose', ({ balance }) => {
+  userStore.setBalance(balance)
 })
 
-const places = ['black', 'green', 'red']
-// const result = { black: [], green: [], red: [] }
-
-const bet = (place: string) => {
+// func
+const bet = async (place: string) => {
   if (gameStore.amount && gameStore.amount <= userStore.balance) {
-    betAmounts.value[place] = roundMoney(
-      gameStore.amount + betAmounts.value[place]
-    ) // Update the bet amount for the selected place
-    userStore.changeBalance(-gameStore.amount)
-
-    socket.emit('game:choose', betAmounts.value)
+    const betAmount = roundMoney(gameStore.amount)
+    const res = await socket.emitWithAck('game:choosing', { place, betAmount })
+    if (res.status === 'OK') {
+      userStore.setBalance(res.data.balance)
+    }
   }
 }
+
+const betPlayersTotal = computed(() => {
+  const arr: any = {}
+  Object.keys(betPlayers.value).forEach((place) => {
+    arr[place] = {
+      totals: betPlayers.value[place].reduce((a: any, b: any) => {
+        return a + b.betAmount
+      }, 0),
+      length: betPlayers.value[place].length,
+    }
+  })
+  return arr
+})
+
+onMounted(async () => {
+  const res = await socket.emitWithAck('game:status')
+  if (res.status === 'OK') {
+    isBetEnabled.value = res.data.isBetEnabled
+  }
+})
 </script>
 
 <style scoped>

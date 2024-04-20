@@ -1,26 +1,3 @@
-<script setup lang="ts">
-import { reactive, ref } from 'vue'
-
-import { socket } from '../services/socket'
-
-const chatValue = ref('')
-const chats: any = reactive([])
-
-const onChat = async () => {
-  const payload = {
-    content: chatValue.value,
-  }
-  const res = await socket.emitWithAck('chat:send', payload)
-  chats.push(res.data.message)
-
-  //clear input
-  chatValue.value = ''
-}
-
-socket.on('chat:sent', (message) => {
-  chats.push(message)
-})
-</script>
 <template>
   <aside class="flex h-full flex-col flex-nowrap w-[250px] px-4">
     <div class="h-12 text-right">
@@ -28,7 +5,7 @@ socket.on('chat:sent', (message) => {
     </div>
     <ul class="h-full flex-1">
       <li v-for="(chat, index) in chats" :key="index">
-        {{ chat.from }}: {{ chat.content }}
+        {{ chat.from }}: {{ chat.message }}
       </li>
     </ul>
 
@@ -43,7 +20,31 @@ socket.on('chat:sent', (message) => {
     </div>
   </aside>
 </template>
+<script setup lang="ts">
+import { reactive, ref } from 'vue'
 
+import { socket } from '../services/socket'
+
+const chatValue = ref('')
+const chats: any = reactive([])
+
+const onChat = async () => {
+  const payload = {
+    message: chatValue.value,
+  }
+  const res = await socket.emitWithAck('chat:send', payload)
+  if (res.status === 'OK') {
+    chats.push(res.data.message)
+    chatValue.value = ''
+  }
+
+  //clear input
+}
+
+socket.on('chat:sent', (message) => {
+  chats.push(message)
+})
+</script>
 <style lang="sass">
 // .section-chat
 //   padding: 0 2rem

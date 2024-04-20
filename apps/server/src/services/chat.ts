@@ -1,26 +1,39 @@
-import { ChatSocket } from '../types/chat'
+import { Request } from 'express'
 
-// VALIDATE AFTER
+import { ChatSchema, chatSchema } from '../../lib/validate/chat'
+import { ChatSocket } from '../types/chat'
+import { CallBack } from '../types/socket'
 
 const sendChat = ({ socket }: ChatSocket) => {
-  return (payload: any, callback: any) => {
-    // if (typeof callback !== 'function') {
-    //   return
-    // }
-    const message = {
-      // from: socket.request.user
-      from: socket.id || 'sam',
-      content: payload.content,
+  return (payload: ChatSchema, callback: CallBack) => {
+    if (typeof callback !== 'function') {
+      return
     }
-    socket.broadcast.emit('chat:sent', message)
 
-    // // callback err or success
-    callback({
-      status: 'OK',
-      data: {
-        message,
-      },
-    })
+    try {
+      chatSchema.parse(payload)
+      const req = socket.request as Request
+      const currentUser = req.currentUser
+      if (!currentUser) return
+
+      const message = {
+        from: currentUser.username,
+        message: payload.message,
+      }
+      socket.broadcast.emit('chat:sent', message)
+
+      callback({
+        status: 'OK',
+        data: {
+          message,
+        },
+      })
+    } catch (error) {
+      callback({
+        status: 'ERROR',
+        error,
+      })
+    }
   }
 }
 

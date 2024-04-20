@@ -154,6 +154,9 @@ importers:
       ts-node-dev:
         specifier: ^2.0.0
         version: 2.0.0(@types/node@20.12.4)(typescript@5.4.3)
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*

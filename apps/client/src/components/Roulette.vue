@@ -7,13 +7,13 @@ const wheel = ref<HTMLElement | null>(null)
 const timer = ref('0')
 const isTimerCount = ref(true)
 
-socket.on('game:start-game', () => {
+socket.on('game:waiting', () => {
   isTimerCount.value = true
 })
-socket.on('game:countdown-time', (value) => {
+socket.on('game:timer', (value) => {
   timer.value = value
 })
-socket.on('game:start-roll', (result: number) => {
+socket.on('game:rolling', (result: number) => {
   isTimerCount.value = false
   spin(result)
 })
@@ -85,6 +85,7 @@ const spinWheel = (roll: number) => {
 
 onMounted(() => {
   initWheel()
+  spin(4)
 })
 </script>
 

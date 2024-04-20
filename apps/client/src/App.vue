@@ -11,10 +11,10 @@ socket.connect()
 
 <template>
   <div data-theme="dark">
-    <Header />
     <div class="flex h-screen">
       <Chat />
       <div class="flex-1 overflow-hidden select-none">
+        <Header />
         <Roulette />
         <GameAmount />
         <GameBoard />
