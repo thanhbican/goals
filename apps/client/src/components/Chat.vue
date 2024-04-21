@@ -37,8 +37,6 @@ const onChat = async () => {
     chats.push(res.data.message)
     chatValue.value = ''
   }
-
-  //clear input
 }
 
 socket.on('chat:sent', (message) => {

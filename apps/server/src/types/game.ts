@@ -24,7 +24,8 @@ export interface GameConfig {
   betList: BetList
   intervalId: NodeJS.Timeout | null
   startTime: number | null
-  timerDuration: number
+  timerWaitingDuration: number
+  timerRollingDuration: number
   updateInterval: number
   status: string
 }

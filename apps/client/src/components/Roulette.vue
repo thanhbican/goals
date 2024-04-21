@@ -1,5 +1,21 @@
+<template>
+  <div class="roulette_overflow">
+    <div
+      v-show="isTimerCount"
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-2xl z-10"
+    >
+      {{ timer }}
+    </div>
+    <div
+      ref="wheel"
+      class="roulette_area"
+      :class="{ 'bg-black opacity-20': isTimerCount }"
+    ></div>
+  </div>
+</template>
+
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 
 import { socket } from '../services/socket'
 
@@ -13,149 +29,41 @@ socket.on('game:waiting', () => {
 socket.on('game:timer', (value) => {
   timer.value = value
 })
-socket.on('game:rolling', (result: number) => {
+socket.on('game:rolling', (position: number) => {
   isTimerCount.value = false
-  spin(result)
+  rolling(position)
 })
 
-const spin = (outcome: number) => {
-  // const outcome = parseInt(wheelValue.value, 10)
-  spinWheel(outcome)
+const rolling = (position: number) => {
+  wheel.value!.style.backgroundPositionX = position + 'px'
 }
-const initWheel = () => {
-  let row = ''
-
-  row += "<div class='row'>"
-  row += "  <div class='card red'>1</div>"
-  row += "  <div class='card black'>14</div>"
-  row += "  <div class='card red'>2</div>"
-  row += "  <div class='card black'>13</div>"
-  row += "  <div class='card red'>3</div>"
-  row += "  <div class='card black'>12</div>"
-  row += "  <div class='card red'>4</div>"
-  row += "  <div class='card green'>0</div>"
-  row += "  <div class='card black'>11</div>"
-  row += "  <div class='card red'>5</div>"
-  row += "  <div class='card black'>10</div>"
-  row += "  <div class='card red'>6</div>"
-  row += "  <div class='card black'>9</div>"
-  row += "  <div class='card red'>7</div>"
-  row += "  <div class='card black'>8</div>"
-  row += '</div>'
-
-  for (let x = 0; x < 29; x++) {
-    if (wheel.value) {
-      wheel.value.insertAdjacentHTML('beforeend', row)
-    }
-  }
-}
-
-const spinWheel = (roll: number) => {
-  const order = [0, 11, 5, 10, 6, 9, 7, 8, 1, 14, 2, 13, 3, 12, 4]
-  const position = order.indexOf(roll)
-
-  const rows = 12
-  const card = 75 + 3 * 2
-  let landingPosition = rows * 15 * card + position * card
-
-  const randomize = Math.floor(Math.random() * 75) - 75 / 2
-  landingPosition += randomize
-
-  const object = {
-    x: Math.floor(Math.random() * 50) / 100,
-    y: Math.floor(Math.random() * 20) / 100,
-  }
-
-  if (!wheel.value) return
-
-  wheel.value.style.transitionTimingFunction = `cubic-bezier(0, ${object.x}, ${object.y}, 1)`
-  wheel.value.style.transitionDuration = '6s'
-  wheel.value.style.transform = `translate3d(-${landingPosition}px, 0px, 0px)`
-
-  setTimeout(() => {
-    if (!wheel.value) return
-
-    wheel.value.style.transitionTimingFunction = ''
-    wheel.value.style.transitionDuration = ''
-
-    const resetTo = -(position * card + randomize)
-    wheel.value.style.transform = `translate3d(${resetTo}px, 0px, 0px)`
-  }, 6 * 1000)
-}
-
-onMounted(() => {
-  initWheel()
-  spin(4)
-})
 </script>
 
-<template>
-  <div class="roulette-wrapper">
-    <div
-      v-show="isTimerCount"
-      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-2xl z-10"
-    >
-      {{ timer }}
-    </div>
-    <div class="selector"></div>
-    <div
-      class="wheel"
-      :class="{ 'bg-black opacity-20': isTimerCount }"
-      ref="wheel"
-    ></div>
-  </div>
-  <div>
-    <!-- <img src="@/assets/roulette_img.png" alt="roulette"> -->
-  </div>
-</template>
-
 <style lang="sass">
-// *
-  // box-sizing: border-box
-// body
-  // font-family: 'Titillium Web', sans-serif
-  // background: #191B28
-
-.roulette-wrapper
+.roulette_overflow
   position: relative
-  justify-content: center
-  width: 100%
-  margin: 0 auto
   overflow: hidden
+  width: 600px
+  margin: auto
+  margin-top: 10px
 
-  & .selector
-    width: 3px
-    background: red
-    left: 50%
-    height: 100%
-    transform: translate(-50%,0%)
+.roulette_area
+  background-image: url("@/assets/roulette_img.png")
+  height: 75px
+  position: relative
+  background-position-x: -262.5px
+  background-size: auto 75px
+  background-repeat: repeat-x
+  transform: translateZ(0)
+  transition: none 0s ease 0s
+
+  &:before
+    content: ""
     position: absolute
-    z-index: 2
-
-  & .wheel
-    display: flex
-
-  & .wheel .row
-    display: flex
-
-  & .wheel .row .card
-    height: 75px
-    width: 75px
-    margin: 3px
-    border-radius: 8px
-    border-bottom: 3px solid rgba(0,0,0,0.2)
-    display: flex
-    align-items: center
-    justify-content: center
-    color: white
-    font-size: 1.5em
-
-.card.red
-  background: #F95146
-
-.card.black
-  background: #2D3035
-
-.card.green
-  background: #00C74D
+    background: #ffd02d
+    height: 100%
+    width: 3px
+    margin: 0 auto
+    left: 0
+    right: 0
 </style>

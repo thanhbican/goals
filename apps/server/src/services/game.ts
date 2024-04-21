@@ -5,8 +5,26 @@ import { gameChooseSchema, GameChooseSchema } from '../../lib/validate/game'
 import { User } from '../models/user'
 import { GameConfig, GameSocket, GameSocketEvent } from '../types/game'
 import { CallBack } from '../types/socket'
+import { randomCircleNumber } from '../utils/util'
 import { generateRoll } from './roll'
 
+const numbers: { [key: number]: number } = {
+  0: 525,
+  1: 0,
+  2: 150,
+  3: 300,
+  4: 450,
+  5: 675,
+  6: 825,
+  7: 975,
+  8: 1050,
+  9: 900,
+  10: 750,
+  11: 600,
+  12: 375,
+  13: 225,
+  14: 75,
+}
 const config: GameConfig = {
   isBetEnabled: false,
   betList: {
@@ -16,7 +34,8 @@ const config: GameConfig = {
   },
   intervalId: null,
   startTime: null,
-  timerDuration: 5000,
+  timerWaitingDuration: 5000,
+  timerRollingDuration: 6000,
   updateInterval: 10,
   status: 'none',
 }
@@ -73,7 +92,7 @@ const gameChoose = ({ io, socket }: GameSocketEvent) => {
   }
 }
 
-const gameRealTime = ({ io }: GameSocket) => {
+const gameRealTimeTimer = ({ io }: GameSocket) => {
   config.isBetEnabled = true
 
   if (!config.startTime) {
@@ -83,7 +102,7 @@ const gameRealTime = ({ io }: GameSocket) => {
   const currentTime = Date.now()
   const elapsed = currentTime - config.startTime
 
-  let timer = config.timerDuration - elapsed
+  let timer = config.timerWaitingDuration - elapsed
   if (timer <= 0) {
     io.emit('game:timer', 0)
     gameResetTimer()
@@ -91,11 +110,46 @@ const gameRealTime = ({ io }: GameSocket) => {
     setTimeout(() => {
       gameAwarding({ io })
       gameReset({ io })
-    }, 6000) // Delay for 6 seconds for game awards
+    }, config.timerRollingDuration) // Delay for 6 seconds for game awards
   } else {
     const formattedTimer = (timer / 1000).toFixed(2) // Convert to seconds with two decimal places
     io.emit('game:timer', formattedTimer)
   }
+}
+
+const gameGetPositionRolling = (number: number) => {
+  const cycles = Math.floor(randomCircleNumber(2, 4))
+  const scrollForNumber = randomCircleNumber(0, 72)
+  const scrollAmount = 825 + numbers[number] + scrollForNumber + 1125 * cycles
+
+  return scrollAmount
+}
+
+const gameRealTimeRolling = (
+  { io }: GameSocket,
+  startValue: number,
+  endValue: number,
+  duration: number
+) => {
+  const startTime = Date.now()
+  const endTime = startTime + duration
+  const totalChange = endValue - startValue
+
+  const interval = setInterval(() => {
+    const currentTime = Date.now()
+    const timeElapsed = currentTime - startTime
+    const progress = timeElapsed / duration
+
+    const currentValue =
+      startValue + totalChange * (1 - Math.pow(1 - progress, 2))
+
+    if (currentTime >= endTime) {
+      io.emit('game:rolling', endValue)
+      clearInterval(interval)
+    } else {
+      io.emit('game:rolling', currentValue)
+    }
+  }, 1)
 }
 
 const gameResetTimer = () => {
@@ -106,6 +160,7 @@ const gameResetTimer = () => {
     config.startTime = null
   }
 }
+
 const gameReset = ({ io }: GameSocket) => {
   // reset game
   config.isBetEnabled = false
@@ -125,15 +180,17 @@ const gameWaiting = ({ io }: GameSocket) => {
     io.emit('game:waiting', { betList: config.betList })
 
     config.intervalId = setInterval(() => {
-      gameRealTime({ io })
+      gameRealTimeTimer({ io })
     }, config.updateInterval)
   }
 }
 
 // roll
 const gameRolling = ({ io }: GameSocket) => {
-  io.emit('game:rolling', generateRoll())
   config.status = 'rolling'
+  const result = generateRoll()
+  const position = gameGetPositionRolling(result)
+  gameRealTimeRolling({ io }, 525, -position, config.timerRollingDuration)
 }
 
 // award and end

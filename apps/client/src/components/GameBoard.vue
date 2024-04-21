@@ -3,7 +3,7 @@
     <button
       v-for="place in places"
       :key="place"
-      class="col-span-3 border border-white"
+      class="col-span-4 border border-white"
       :disabled="!isBetEnabled"
       @click="bet(place)"
     >
