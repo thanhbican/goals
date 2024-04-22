@@ -1,24 +1,63 @@
-import { model, Schema } from 'mongoose'
+import { Model, model, Schema, Types } from 'mongoose'
+
+import { roundMoney } from '../../helpers/util'
+
+interface UserAttrs {
+  username: string
+  password: string
+  balance: Types.Decimal128
+}
+interface UserDoc extends Document {
+  username: string
+  password: string
+  balance: Types.Decimal128
+}
+interface UserModel extends Model<UserDoc> {
+  build(attrs: UserAttrs): UserDoc
+}
 
 const userSchema = new Schema(
   {
-    password: {
-      type: String,
-      required: true,
-    },
     username: {
       type: String,
       unique: true,
       required: true,
     },
+    password: {
+      type: String,
+      required: true,
+    },
     balance: {
-      type: Number,
-      default: 50,
+      type: Schema.Types.Decimal128,
+      default: '500.00', // Store as a string to avoid precision issues
     },
   },
-  { id: true, timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      transform(doc, ret: any) {
+        ret.id = ret._id
+        ret.balance = parseFloat(ret.balance)
+        delete ret._id
+        delete ret.password
+        delete ret.__v
+      },
+    },
+  }
 )
 
-const User = model('user', userSchema)
+// userSchema.post('findOneAndUpdate', function (doc) {
+//   doc.balance = roundMoney(doc.balance)
+//   doc.save()
+// })
+// userSchema.post('updateOne', function (doc) {
+//   doc.balance = roundMoney(doc.balance)
+//   console.log('z')
+// })
+// userSchema.post('bulkWrite', function (doc) {
+//   doc.balance = roundMoney(doc.balance)
+// })
+
+const User = model<UserDoc, UserModel>('user', userSchema)
 
 export { User }

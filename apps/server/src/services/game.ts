@@ -2,8 +2,13 @@ import { Request } from 'express'
 
 import { roundMoney } from '../../helpers/util'
 import { gameChooseSchema, GameChooseSchema } from '../../lib/validate/game'
-import { User } from '../models/user'
-import { GameConfig, GameSocket, GameSocketEvent } from '../types/game'
+import { User } from '../models/User'
+import {
+  GameConfig,
+  GameSocket,
+  GameSocketEvent,
+  RollColor,
+} from '../types/game'
 import { CallBack } from '../types/socket'
 import { randomCircleNumber } from '../utils/util'
 import { generateRoll } from './roll'
@@ -34,8 +39,8 @@ const config: GameConfig = {
   },
   intervalId: null,
   startTime: null,
-  timerWaitingDuration: 5000,
-  timerRollingDuration: 6000,
+  timerWaitingDuration: 15000,
+  timerRollingDuration: 5000,
   updateInterval: 10,
   status: 'none',
 }
@@ -52,19 +57,16 @@ const gameChoose = ({ io, socket }: GameSocketEvent) => {
       if (!currentUser) return
 
       const { username } = currentUser
-      const user = await User.findOne({ username })
+
+      const user = await User.findOneAndUpdate(
+        { username: username },
+        { $inc: { balance: -betAmount } },
+        { new: true }
+      )
       if (!user) {
         throw new Error()
       }
-      const updatedUser = await User.findOneAndUpdate(
-        { username: username },
-        { $set: { balance: roundMoney(user.balance - betAmount) } },
-        { new: true }
-      )
 
-      if (!updatedUser) {
-        throw new Error()
-      }
       const betPlace = config.betList[place]
       const player = betPlace.find((p) => p.username === username)
       if (!player) {
@@ -73,14 +75,14 @@ const gameChoose = ({ io, socket }: GameSocketEvent) => {
         player.betAmount = roundMoney(player.betAmount + betAmount)
       }
 
-      io.emit('game:after-choose', {
+      io.emit('game:choosing-list', {
         betList: config.betList,
       })
 
       callback({
         status: 'OK',
         data: {
-          balance: updatedUser.balance,
+          balance: user.balance,
         },
       })
     } catch (error) {
@@ -104,16 +106,16 @@ const gameRealTimeTimer = ({ io }: GameSocket) => {
 
   let timer = config.timerWaitingDuration - elapsed
   if (timer <= 0) {
-    io.emit('game:timer', 0)
+    io.emit('game:waiting-timer', 0)
     gameResetTimer()
-    gameRolling({ io })
+    const { rollColor, rate } = gameRolling({ io })
     setTimeout(() => {
-      gameAwarding({ io })
+      gameAwarding({ io }, { rollColor, rate })
       gameReset({ io })
     }, config.timerRollingDuration) // Delay for 6 seconds for game awards
   } else {
     const formattedTimer = (timer / 1000).toFixed(2) // Convert to seconds with two decimal places
-    io.emit('game:timer', formattedTimer)
+    io.emit('game:waiting-timer', formattedTimer)
   }
 }
 
@@ -188,14 +190,38 @@ const gameWaiting = ({ io }: GameSocket) => {
 // roll
 const gameRolling = ({ io }: GameSocket) => {
   config.status = 'rolling'
-  const result = generateRoll()
-  const position = gameGetPositionRolling(result)
+  const { rollColor, roll, rate } = generateRoll()
+  const position = gameGetPositionRolling(roll)
   gameRealTimeRolling({ io }, 525, -position, config.timerRollingDuration)
+
+  return { rollColor, rate }
 }
 
 // award and end
-const gameAwarding = ({ io }: GameSocket) => {
+const gameAwarding = async (
+  { io }: GameSocket,
+  { rollColor, rate }: { rollColor: RollColor; rate: number }
+) => {
   config.status = 'rewarding'
+
+  const users = config.betList[rollColor]
+  if (!users.length) {
+    return
+  }
+
+  await User.bulkWrite(
+    users.map((user) => {
+      const winAmount = roundMoney(user.betAmount * rate)
+      return {
+        updateOne: {
+          filter: { username: user.username },
+          update: { $inc: { balance: winAmount } },
+        },
+      }
+    })
+  )
+
+  io.emit('game:refresh-user')
 }
 
 const gameStatus = () => {
@@ -218,7 +244,7 @@ const initGame = ({ io }: GameSocket) => {
 
   io.on('connection', (socket) => {
     socket.on('game:status', gameStatus)
-    socket.on('game:choose', gameChoose({ io, socket }))
+    socket.on('game:choosing', gameChoose({ io, socket }))
 
     io.emit('game:choosing', {
       betList: config.betList,

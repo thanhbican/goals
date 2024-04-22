@@ -1,9 +1,17 @@
 import { UserSchema } from '@/schemas/userSchema'
 import http from '@/services/http'
 
-const getUser = async () => {
+const getCurrentUser = async () => {
   try {
     const res = await http.get('/auth/user')
+    return res.data
+  } catch (err) {
+    throw err
+  }
+}
+const getUser = async (userId: string) => {
+  try {
+    const res = await http.get(`/auth/user/${userId}`)
     return res.data
   } catch (err) {
     throw err
@@ -25,7 +33,6 @@ const login = async (payload: UserSchema) => {
     throw err
   }
 }
-
 const logout = async () => {
   try {
     const res = await http.post('/auth/logout')
@@ -37,6 +44,7 @@ const logout = async () => {
 
 export default {
   getUser,
+  getCurrentUser,
   signup,
   login,
   logout,

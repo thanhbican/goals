@@ -16,12 +16,15 @@ export const useUserStore = defineStore({
   actions: {
     async getUser() {
       try {
-        const user = await userApi.getUser()
-        if (!user) {
-          this.resetUser()
-        } else {
-          this.setUser(user)
+        const currentUser = await userApi.getCurrentUser()
+        if (currentUser) {
+          const user = await userApi.getUser(currentUser.id)
+          if (user) {
+            return this.setUser(user)
+          }
         }
+
+        this.resetUser()
       } catch (err) {
         console.error(err)
       }

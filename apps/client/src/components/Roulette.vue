@@ -26,7 +26,7 @@ const isTimerCount = ref(true)
 socket.on('game:waiting', () => {
   isTimerCount.value = true
 })
-socket.on('game:timer', (value) => {
+socket.on('game:waiting-timer', (value) => {
   timer.value = value
 })
 socket.on('game:rolling', (position: number) => {

@@ -29,3 +29,5 @@ export interface GameConfig {
   updateInterval: number
   status: string
 }
+
+export type RollColor = 'black' | 'red' | 'green'

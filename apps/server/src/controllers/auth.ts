@@ -4,7 +4,22 @@ import jwt from 'jsonwebtoken'
 
 import { BadRequestError } from '../errors/status/badRequestError'
 import { NotAuthError } from '../errors/status/notAuthError'
-import { User } from '../models/user'
+import { User } from '../models/User'
+
+const getCurrentUser = async (req: Request, res: Response) => {
+  res.send(req.currentUser || null)
+}
+
+const getUser = async (req: Request, res: Response) => {
+  const { userId } = req.params
+
+  const existUser = await User.findById(userId)
+  if (!existUser) {
+    throw new NotAuthError()
+  }
+
+  res.status(200).send(existUser)
+}
 
 const signIn = async (req: Request, res: Response) => {
   const { username, password } = req.body
@@ -56,4 +71,4 @@ const logout = (req: Request, res: Response) => {
   req.session = null
   res.status(200).send({})
 }
-export { signIn, login, logout }
+export { getCurrentUser, getUser, signIn, login, logout }

@@ -1,5 +1,6 @@
 import cron from 'node-cron'
 
+import { RollColor } from '../types/game'
 import { generatePublicSeed } from '../utils/publicSeed'
 import { generateServerSeed } from '../utils/serverSeed'
 import { sha256 } from '../utils/util'
@@ -16,22 +17,26 @@ const generateRoll = () => {
   count += 1
   const round = count + ''
   console.log(round)
-  console.log(serverSeed)
+  // console.log(serverSeed)
   const hash = sha256(serverSeed + '-' + publicSeed + '-' + round)
   const roll = parseInt(hash.substring(0, 8), 16) % 15
 
-  let rollColor = ''
+  let rollColor: RollColor = 'black'
+  let rate = 2
 
   if (roll === 0) {
     rollColor = 'green'
+    rate = 14
   } else if (roll >= 1 && roll <= 7) {
     rollColor = 'red'
+    rate = 2
   } else if (roll >= 8 && roll <= 14) {
     rollColor = 'black'
+    rate = 2
   }
   console.log(`Roll: ${roll}`)
   console.log(`Colour: ${rollColor}`)
-  return roll
+  return { roll, rollColor, rate }
 }
 
 generateSeed()

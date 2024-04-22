@@ -5,7 +5,7 @@
       :key="place"
       class="col-span-4 border border-white"
       :disabled="!isBetEnabled"
-      @click="bet(place)"
+      @click="onBet(place)"
     >
       {{ place }}
 
@@ -45,18 +45,25 @@ socket.on('game:waiting', ({ betList }) => {
   betPlayers.value = betList
   isBetEnabled.value = true
 })
+socket.on('game:waiting-timer', () => {
+  isBetEnabled.value = true
+})
 socket.on('game:rolling', () => {
   isBetEnabled.value = false
 })
-socket.on('game:choosing', ({ betList }) => {
+socket.on('game:choosing-list', ({ betList }) => {
   betPlayers.value = betList
 })
-socket.on('game:balance-after-choose', ({ balance }) => {
-  userStore.setBalance(balance)
+socket.on('game:refresh-user', async () => {
+  try {
+    await userStore.getUser()
+  } catch (error) {
+    console.error(error)
+  }
 })
 
 // func
-const bet = async (place: string) => {
+const onBet = async (place: string) => {
   if (gameStore.amount && gameStore.amount <= userStore.balance) {
     const betAmount = roundMoney(gameStore.amount)
     const res = await socket.emitWithAck('game:choosing', { place, betAmount })
