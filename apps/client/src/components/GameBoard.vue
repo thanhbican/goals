@@ -4,21 +4,24 @@
       v-for="place in places"
       :key="place"
       class="col-span-4 border border-white"
+      :class="{
+        'cursor-pointer': !!isBetEnabled,
+        'cursor-not-allowed': !!!isBetEnabled,
+      }"
       :disabled="!isBetEnabled"
       @click="onBet(place)"
     >
       {{ place }}
 
       <div class="flex justify-between items-center">
-        <h2>{{ betPlayersTotal[place]?.length }} bets in totals</h2>
-        <p>{{ betPlayersTotal[place]?.totals || 0 }}</p>
+        <h2>{{ betListTotal[place].length }} bets in totals</h2>
+        <p>{{ betListTotal[place].total || 0 }}</p>
       </div>
       <ul>
-        <li v-for="player in betPlayers[place]">
+        <li v-for="player in betList[place]">
           {{ player.username }} : {{ player.betAmount }}
         </li>
       </ul>
-      <!-- </ul> -->
     </button>
   </div>
 </template>
@@ -27,7 +30,9 @@
 import { roundMoney } from '@/helper/util'
 import { useGameStore } from '@/store/game'
 import { useUserStore } from '@/store/user'
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
+
+import { BetList, BetListTotal } from '@/types/game'
 
 import { socket } from '../services/socket'
 
@@ -36,13 +41,32 @@ const gameStore = useGameStore()
 const userStore = useUserStore()
 
 // variable
-const places = ['black', 'green', 'red']
-const betPlayers: any = ref([])
+const places = ['black', 'green', 'red'] as const
 const isBetEnabled = ref(false)
+const betList = ref<BetList>({
+  black: [],
+  green: [],
+  red: [],
+})
+const betListTotal = ref<BetListTotal>({
+  black: {
+    total: 0,
+    length: 0,
+  },
+  green: {
+    total: 0,
+    length: 0,
+  },
+  red: {
+    total: 0,
+    length: 0,
+  },
+})
 
 // socket
-socket.on('game:waiting', ({ betList }) => {
-  betPlayers.value = betList
+socket.on('game:waiting', ({ betList: list, betListTotal: listTotal }) => {
+  betList.value = list
+  betListTotal.value = listTotal
   isBetEnabled.value = true
 })
 socket.on('game:waiting-timer', () => {
@@ -51,9 +75,14 @@ socket.on('game:waiting-timer', () => {
 socket.on('game:rolling', () => {
   isBetEnabled.value = false
 })
-socket.on('game:choosing-list', ({ betList }) => {
-  betPlayers.value = betList
-})
+socket.on(
+  'game:choosing-list',
+  ({ betList: list, betListTotal: listTotal }) => {
+    betList.value = list
+    betListTotal.value = listTotal
+    console.log(betListTotal.value)
+  }
+)
 socket.on('game:refresh-user', async () => {
   try {
     await userStore.getUser()
@@ -72,19 +101,6 @@ const onBet = async (place: string) => {
     }
   }
 }
-
-const betPlayersTotal = computed(() => {
-  const arr: any = {}
-  Object.keys(betPlayers.value).forEach((place) => {
-    arr[place] = {
-      totals: betPlayers.value[place].reduce((a: any, b: any) => {
-        return a + b.betAmount
-      }, 0),
-      length: betPlayers.value[place].length,
-    }
-  })
-  return arr
-})
 
 onMounted(async () => {
   const res = await socket.emitWithAck('game:status')

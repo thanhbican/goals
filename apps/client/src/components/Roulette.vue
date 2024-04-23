@@ -28,6 +28,7 @@ socket.on('game:waiting', () => {
 })
 socket.on('game:waiting-timer', (value) => {
   timer.value = value
+  isTimerCount.value = true
 })
 socket.on('game:rolling', (position: number) => {
   isTimerCount.value = false

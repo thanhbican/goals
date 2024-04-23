@@ -4,6 +4,8 @@ import { roundMoney } from '../../helpers/util'
 import { gameChooseSchema, GameChooseSchema } from '../../lib/validate/game'
 import { User } from '../models/User'
 import {
+  Bet,
+  BetListTotal,
   GameConfig,
   GameSocket,
   GameSocketEvent,
@@ -37,6 +39,20 @@ const config: GameConfig = {
     green: [],
     red: [],
   },
+  betListTotal: {
+    black: {
+      total: 0,
+      length: 0,
+    },
+    green: {
+      total: 0,
+      length: 0,
+    },
+    red: {
+      total: 0,
+      length: 0,
+    },
+  },
   intervalId: null,
   startTime: null,
   timerWaitingDuration: 15000,
@@ -59,7 +75,7 @@ const gameChoose = ({ io, socket }: GameSocketEvent) => {
       const { username } = currentUser
 
       const user = await User.findOneAndUpdate(
-        { username: username },
+        { username: username, balance: { $gte: betAmount } },
         { $inc: { balance: -betAmount } },
         { new: true }
       )
@@ -75,14 +91,29 @@ const gameChoose = ({ io, socket }: GameSocketEvent) => {
         player.betAmount = roundMoney(player.betAmount + betAmount)
       }
 
+      Object.keys(config.betList).forEach((place) => {
+        const key = place as keyof BetListTotal
+        config.betListTotal[key] = {
+          total: config.betList[key].reduce(
+            (accumulator: number, currentBet: Bet) => {
+              return accumulator + currentBet.betAmount
+            },
+            0
+          ),
+          length: config.betList[key].length,
+        }
+      })
+      console.log(config.betListTotal)
+
       io.emit('game:choosing-list', {
         betList: config.betList,
+        betListTotal: config.betListTotal,
       })
 
       callback({
         status: 'OK',
         data: {
-          balance: user.balance,
+          balance: parseFloat(user.balance.toString()),
         },
       })
     } catch (error) {
@@ -171,6 +202,20 @@ const gameReset = ({ io }: GameSocket) => {
     green: [],
     red: [],
   }
+  config.betListTotal = {
+    black: {
+      total: 0,
+      length: 0,
+    },
+    green: {
+      total: 0,
+      length: 0,
+    },
+    red: {
+      total: 0,
+      length: 0,
+    },
+  }
   // start game again
   gameWaiting({ io })
 }
@@ -179,7 +224,10 @@ const gameReset = ({ io }: GameSocket) => {
 const gameWaiting = ({ io }: GameSocket) => {
   if (config.intervalId === null) {
     config.status = 'waiting'
-    io.emit('game:waiting', { betList: config.betList })
+    io.emit('game:waiting', {
+      betList: config.betList,
+      betListTotal: config.betListTotal,
+    })
 
     config.intervalId = setInterval(() => {
       gameRealTimeTimer({ io })
@@ -248,6 +296,7 @@ const initGame = ({ io }: GameSocket) => {
 
     io.emit('game:choosing', {
       betList: config.betList,
+      betListTotal: config.betListTotal,
     })
   })
 }

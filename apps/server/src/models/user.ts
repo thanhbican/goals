@@ -37,7 +37,7 @@ const userSchema = new Schema(
     toJSON: {
       transform(doc, ret: any) {
         ret.id = ret._id
-        ret.balance = parseFloat(ret.balance)
+        ret.balance = parseFloat(ret.balance.toString())
         delete ret._id
         delete ret.password
         delete ret.__v
@@ -45,18 +45,6 @@ const userSchema = new Schema(
     },
   }
 )
-
-// userSchema.post('findOneAndUpdate', function (doc) {
-//   doc.balance = roundMoney(doc.balance)
-//   doc.save()
-// })
-// userSchema.post('updateOne', function (doc) {
-//   doc.balance = roundMoney(doc.balance)
-//   console.log('z')
-// })
-// userSchema.post('bulkWrite', function (doc) {
-//   doc.balance = roundMoney(doc.balance)
-// })
 
 const User = model<UserDoc, UserModel>('user', userSchema)
 

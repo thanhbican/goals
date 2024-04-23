@@ -8,9 +8,13 @@ export interface GameSocketEvent {
   io: Server
 }
 
-interface Bet {
+export interface Bet {
   username: string
   betAmount: number
+}
+export interface BetTotal {
+  total: number
+  length: number
 }
 
 export interface BetList {
@@ -18,10 +22,16 @@ export interface BetList {
   green: Bet[]
   red: Bet[]
 }
+export interface BetListTotal {
+  black: BetTotal
+  green: BetTotal
+  red: BetTotal
+}
 
 export interface GameConfig {
   isBetEnabled: boolean
   betList: BetList
+  betListTotal: BetListTotal
   intervalId: NodeJS.Timeout | null
   startTime: number | null
   timerWaitingDuration: number
