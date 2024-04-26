@@ -1,38 +1,72 @@
 <template>
-  <div class="grid grid-cols-12 gap-4">
-    <button
-      v-for="place in places"
-      :key="place"
-      class="col-span-4 border border-white"
-      :class="{
-        'cursor-pointer': !!isBetEnabled,
-        'cursor-not-allowed': !!!isBetEnabled,
-      }"
-      :disabled="!isBetEnabled"
-      @click="onBet(place)"
-    >
-      {{ place }}
+  <section class="grid grid-cols-12 gap-4">
+    <div v-for="place in places" :key="place" class="col-span-4">
+      <button
+        class="border border-white w-full"
+        :class="{
+          'cursor-pointer': !!isBetEnabled,
+          'cursor-not-allowed': !!!isBetEnabled,
+        }"
+        :disabled="!isBetEnabled"
+        @click="onBet(place)"
+      >
+        <div
+          v-if="place === 'red'"
+          class="flex justify-between items-center bg-red text-white p-4"
+        >
+          <p>1 to 7</p>
+          <p>WIN 2x</p>
+        </div>
+        <div
+          v-if="place === 'green'"
+          class="flex justify-between items-center bg-green text-white p-4"
+        >
+          <p>0</p>
+          <p>WIN 14x</p>
+        </div>
+        <div
+          v-if="place === 'black'"
+          class="flex justify-between items-center bg-black text-white p-4"
+        >
+          <p>8 to 14</p>
+          <p>WIN 2x</p>
+        </div>
+      </button>
 
-      <div class="flex justify-between items-center">
-        <h2>{{ betListTotal[place].length }} bets in totals</h2>
-        <p>{{ betListTotal[place].total || 0 }}</p>
+      <div class="bg-[rgba(0,0,0,.5)] text-[#c0c0c0] p-4">
+        <div class="flex justify-between items-center">
+          <h2>{{ betListTotal[place].length }} bets in totals</h2>
+          <div class="flex items-center gap-x-2">
+            <img
+              src="@/assets/money_img.svg"
+              width="16"
+              height="16"
+              alt="money icon"
+            />
+            <p ref="total">0</p>
+          </div>
+        </div>
+        <ul v-if="betList[place]?.length" class="mt-4 space-y-2">
+          <li
+            v-for="player in betList[place]"
+            class="flex justify-between items-center"
+          >
+            <h3>{{ player.username }}</h3>
+            <p>{{ player.betAmount }}</p>
+          </li>
+        </ul>
       </div>
-      <ul>
-        <li v-for="player in betList[place]">
-          {{ player.username }} : {{ player.betAmount }}
-        </li>
-      </ul>
-    </button>
-  </div>
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">
-import { roundMoney } from '@/helper/util'
+import { animateMoney, roundMoney } from '@/helper/util'
 import { useGameStore } from '@/store/game'
 import { useUserStore } from '@/store/user'
 import { onMounted, ref } from 'vue'
 
-import { BetList, BetListTotal } from '@/types/game'
+import { BetList, BetListTotal, BetTotal, RollColor } from '@/types/game'
 
 import { socket } from '../services/socket'
 
@@ -41,15 +75,15 @@ const gameStore = useGameStore()
 const userStore = useUserStore()
 
 // variable
-const places = ['black', 'green', 'red'] as const
+const places = ['red', 'green', 'black'] as const
 const isBetEnabled = ref(false)
 const betList = ref<BetList>({
-  black: [],
-  green: [],
   red: [],
+  green: [],
+  black: [],
 })
 const betListTotal = ref<BetListTotal>({
-  black: {
+  red: {
     total: 0,
     length: 0,
   },
@@ -57,16 +91,19 @@ const betListTotal = ref<BetListTotal>({
     total: 0,
     length: 0,
   },
-  red: {
+  black: {
     total: 0,
     length: 0,
   },
 })
+const total = ref<HTMLElement[] | null>(null)
 
 // socket
 socket.on('game:waiting', ({ betList: list, betListTotal: listTotal }) => {
   betList.value = list
   betListTotal.value = listTotal
+  animationTotal()
+
   isBetEnabled.value = true
 })
 socket.on('game:waiting-timer', () => {
@@ -80,7 +117,7 @@ socket.on(
   ({ betList: list, betListTotal: listTotal }) => {
     betList.value = list
     betListTotal.value = listTotal
-    console.log(betListTotal.value)
+    animationTotal()
   }
 )
 socket.on('game:refresh-user', async () => {
@@ -100,6 +137,15 @@ const onBet = async (place: string) => {
       userStore.setBalance(res.data.balance)
     }
   }
+}
+
+const animationTotal = () => {
+  Object.keys(betListTotal.value).forEach((place, index) => {
+    if (!total.value) return
+
+    const key = place as keyof BetListTotal
+    animateMoney(total.value[index], betListTotal.value[key].total)
+  })
 }
 
 onMounted(async () => {

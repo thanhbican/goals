@@ -1,34 +1,35 @@
 <template>
-  <h1>Balance: {{ state.userBalance }}</h1>
-  <div class="grid grid-cols-12">
-    <div class="col-span-4">
-      <label class="input input-bordered flex items-center gap-2">
+  <section class="flex justify-center items-center h-10">
+    <div class="flex border-2 border-grey border-solid">
+      <label class="input-bet">
         <input
           v-model="state.betAmount"
           type="number"
-          placeholder="Enter bet amount"
+          placeholder="Enter bet amount..."
+          class="h-10 w-full bg-black pl-8 pr-4 appearance-none border-r border-solid border-grey"
         />
       </label>
+      <div class="bg-black h-10 space-x-4 text-xs flex items-center px-4">
+        <button class="bg-grey w-11 h-5" @click="clearBetAmount">CLEAR</button>
+        <button
+          v-for="increment in state.increments"
+          :key="increment"
+          @click="changeBetAmount(increment)"
+          class="bg-grey w-11 h-5"
+        >
+          +{{ increment }}
+        </button>
+
+        <button class="bg-grey w-11 h-6" @click="halfBetAmount">1/2</button>
+        <button class="bg-grey w-11 h-5" @click="doubleBetAmount">x2</button>
+        <button class="bg-grey w-11 h-5" @click="maxBetAmount">Max</button>
+      </div>
     </div>
-    <div class="col-span-8 space-x-4">
-      <button @click="clearBetAmount">CLEAR</button>
-      <button
-        v-for="increment in state.increments"
-        :key="increment"
-        @click="changeBetAmount(increment)"
-      >
-        +{{ increment }}
-      </button>
-      <button @click="halfBetAmount">1/2</button>
-      <button @click="doubleBetAmount">x2</button>
-      <button @click="maxBetAmount">Max</button>
-      {{ gameStore.amount }}
-    </div>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">
-import { roundMoney } from '@/helper/util'
+import { countDecimals, roundMoney } from '@/helper/util'
 import { useGameStore } from '@/store/game'
 import { useUserStore } from '@/store/user'
 import { ref, watchEffect } from 'vue'
@@ -51,6 +52,9 @@ const userStore = useUserStore()
 const state = ref<BetState>({ ...initialState })
 
 watchEffect(() => {
+  if (state.value.betAmount) {
+    console.log(countDecimals(state.value.betAmount))
+  }
   // Whenever state.betAmount changes, update gameStore.amount
   if (gameStore.amount && gameStore.amount > userStore.balance) {
     state.value.betAmount = userStore.balance
@@ -106,4 +110,18 @@ const maxBetAmount = () => {
 }
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.input-bet {
+  position: relative;
+  &:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    width: 16px;
+    height: 16px;
+    transform: translate(0, -50%);
+    background: url('@/assets/money_img.svg') center/contain no-repeat;
+  }
+}
+</style>

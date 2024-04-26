@@ -1,5 +1,5 @@
 <template>
-  <div class="roulette_overflow">
+  <section class="roulette-overflow">
     <div
       v-show="isTimerCount"
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-2xl z-10"
@@ -8,10 +8,10 @@
     </div>
     <div
       ref="wheel"
-      class="roulette_area"
+      class="roulette-area"
       :class="{ 'bg-black opacity-20': isTimerCount }"
     ></div>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">
@@ -41,14 +41,14 @@ const rolling = (position: number) => {
 </script>
 
 <style lang="sass">
-.roulette_overflow
+.roulette-overflow
   position: relative
   overflow: hidden
   width: 600px
   margin: auto
   margin-top: 10px
 
-.roulette_area
+.roulette-area
   background-image: url("@/assets/roulette_img.png")
   height: 75px
   position: relative

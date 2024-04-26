@@ -35,12 +35,12 @@ const numbers: { [key: number]: number } = {
 const config: GameConfig = {
   isBetEnabled: false,
   betList: {
-    black: [],
-    green: [],
     red: [],
+    green: [],
+    black: [],
   },
   betListTotal: {
-    black: {
+    red: {
       total: 0,
       length: 0,
     },
@@ -48,7 +48,7 @@ const config: GameConfig = {
       total: 0,
       length: 0,
     },
-    red: {
+    black: {
       total: 0,
       length: 0,
     },
@@ -103,7 +103,6 @@ const gameChoose = ({ io, socket }: GameSocketEvent) => {
           length: config.betList[key].length,
         }
       })
-      console.log(config.betListTotal)
 
       io.emit('game:choosing-list', {
         betList: config.betList,
@@ -198,12 +197,12 @@ const gameReset = ({ io }: GameSocket) => {
   // reset game
   config.isBetEnabled = false
   config.betList = {
-    black: [],
-    green: [],
     red: [],
+    green: [],
+    black: [],
   }
   config.betListTotal = {
-    black: {
+    red: {
       total: 0,
       length: 0,
     },
@@ -211,7 +210,7 @@ const gameReset = ({ io }: GameSocket) => {
       total: 0,
       length: 0,
     },
-    red: {
+    black: {
       total: 0,
       length: 0,
     },
@@ -294,7 +293,7 @@ const initGame = ({ io }: GameSocket) => {
     socket.on('game:status', gameStatus)
     socket.on('game:choosing', gameChoose({ io, socket }))
 
-    io.emit('game:choosing', {
+    io.emit('game:choosing-list', {
       betList: config.betList,
       betListTotal: config.betListTotal,
     })

@@ -17,3 +17,5 @@ export interface BetListTotal {
   green: BetTotal
   red: BetTotal
 }
+
+export type RollColor = 'black' | 'red' | 'green'

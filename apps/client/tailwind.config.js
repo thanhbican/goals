@@ -2,7 +2,14 @@
 export default {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        grey: '#333541',
+        red: '#c9302c',
+        blackGame: '#444444',
+        green: '#449d44',
+      },
+    },
   },
   plugins: [require('daisyui')],
   daisyui: {

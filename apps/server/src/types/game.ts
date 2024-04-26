@@ -18,14 +18,14 @@ export interface BetTotal {
 }
 
 export interface BetList {
-  black: Bet[]
-  green: Bet[]
   red: Bet[]
+  green: Bet[]
+  black: Bet[]
 }
 export interface BetListTotal {
-  black: BetTotal
-  green: BetTotal
   red: BetTotal
+  green: BetTotal
+  black: BetTotal
 }
 
 export interface GameConfig {
@@ -40,4 +40,4 @@ export interface GameConfig {
   status: string
 }
 
-export type RollColor = 'black' | 'red' | 'green'
+export type RollColor = 'red' | 'green' | 'black'
