@@ -57,6 +57,7 @@ const config: GameConfig = {
   startTime: null,
   timerWaitingDuration: 15000,
   timerRollingDuration: 5000,
+  timerAwardingDuration: 5000,
   updateInterval: 10,
   status: 'none',
 }
@@ -141,7 +142,9 @@ const gameRealTimeTimer = ({ io }: GameSocket) => {
     const { rollColor, rate } = gameRolling({ io })
     setTimeout(() => {
       gameAwarding({ io }, { rollColor, rate })
-      gameReset({ io })
+      setTimeout(() => {
+        gameReset({ io })
+      }, config.timerAwardingDuration)
     }, config.timerRollingDuration) // Delay for 6 seconds for game awards
   } else {
     const formattedTimer = (timer / 1000).toFixed(2) // Convert to seconds with two decimal places
@@ -250,6 +253,9 @@ const gameAwarding = async (
   { rollColor, rate }: { rollColor: RollColor; rate: number }
 ) => {
   config.status = 'rewarding'
+  config.betListTotal[rollColor].total =
+    config.betListTotal[rollColor].total * 2
+  io.emit('game:result', { rollColor, betListTotal: config.betListTotal })
 
   const users = config.betList[rollColor]
   if (!users.length) {
@@ -267,7 +273,6 @@ const gameAwarding = async (
       }
     })
   )
-
   io.emit('game:refresh-user')
 }
 
@@ -290,7 +295,7 @@ const initGame = ({ io }: GameSocket) => {
   gameWaiting({ io })
 
   io.on('connection', (socket) => {
-    socket.on('game:status', gameStatus)
+    socket.on('game:status', gameStatus())
     socket.on('game:choosing', gameChoose({ io, socket }))
 
     io.emit('game:choosing-list', {

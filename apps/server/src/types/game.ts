@@ -36,6 +36,7 @@ export interface GameConfig {
   startTime: number | null
   timerWaitingDuration: number
   timerRollingDuration: number
+  timerAwardingDuration: number
   updateInterval: number
   status: string
 }

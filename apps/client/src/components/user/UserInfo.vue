@@ -30,9 +30,15 @@ defineProps<{ user: User }>()
 const userStore = useUserStore()
 
 const logout = async () => {
-  await userApi.logout()
-  socket.disconnect().connect()
-  userStore.resetUser()
+  try {
+    await userApi.logout()
+    socket.on('disconnect', () => {
+      socket.connect()
+    })
+    userStore.resetUser()
+  } catch (err) {
+    console.error(err)
+  }
 }
 </script>
 

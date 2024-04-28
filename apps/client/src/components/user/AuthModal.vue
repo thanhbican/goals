@@ -71,9 +71,12 @@ const onSubmit = handleSubmit(async (values) => {
       await userApi.login(values)
       authModal.value?.close()
     }
-    socket.disconnect().connect()
+    socket.on('disconnect', () => {
+      socket.connect()
+    })
     await userStore.getUser()
   } catch (err) {
+    console.log('sam')
     console.error(err)
   }
 })

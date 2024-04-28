@@ -7,6 +7,7 @@
           type="number"
           placeholder="Enter bet amount..."
           class="h-10 w-full bg-black pl-8 pr-4 appearance-none border-r border-solid border-grey"
+          :class="{ 'is-invalid': !isBetAmountValid }"
         />
       </label>
       <div class="bg-black h-10 space-x-4 text-xs flex items-center px-4">
@@ -29,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { countDecimals, roundMoney } from '@/helper/util'
+import { countDecimals, roundMoney, toFixedNoRounding } from '@/helper/util'
 import { useGameStore } from '@/store/game'
 import { useUserStore } from '@/store/user'
 import { ref, watchEffect } from 'vue'
@@ -50,16 +51,22 @@ const gameStore = useGameStore()
 const userStore = useUserStore()
 
 const state = ref<BetState>({ ...initialState })
+const isBetAmountValid = ref(true)
 
 watchEffect(() => {
-  if (state.value.betAmount) {
-    console.log(countDecimals(state.value.betAmount))
-  }
   // Whenever state.betAmount changes, update gameStore.amount
   if (gameStore.amount && gameStore.amount > userStore.balance) {
     state.value.betAmount = userStore.balance
   }
   if (state.value.betAmount !== null) {
+    const decimals = countDecimals(state.value.betAmount)
+    if (decimals > 2) {
+      state.value.betAmount = toFixedNoRounding(state.value.betAmount)
+      isBetAmountValid.value = false
+      setTimeout(() => {
+        isBetAmountValid.value = true
+      }, 400)
+    }
     state.value.betAmount = Math.min(
       state.value.betAmount,
       state.value.userBalance
@@ -122,6 +129,19 @@ const maxBetAmount = () => {
     height: 16px;
     transform: translate(0, -50%);
     background: url('@/assets/money_img.svg') center/contain no-repeat;
+  }
+  input {
+    // &.is-valid {
+    //   &:focus {
+    //     outline: 1px solid #c9302c;
+    //   }
+    // }
+    &.is-invalid {
+      &:focus {
+        outline: 2px solid #c9302c;
+        border-radius: 2px;
+      }
+    }
   }
 }
 </style>

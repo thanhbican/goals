@@ -1,6 +1,16 @@
 <template>
   <section class="grid grid-cols-12 gap-4">
-    <div v-for="place in places" :key="place" class="col-span-4">
+    <div
+      v-for="place in places"
+      :key="place"
+      class="col-span-4"
+      :class="{
+        'border-2 border-green border-solid': currentRollColor === place,
+        'border-2 border-yellow-400 border-solid':
+          !!currentBet[place] && currentRollColor !== place,
+        'opacity-50': !!!isBetEnabled && currentRollColor !== place,
+      }"
+    >
       <button
         class="border border-white w-full"
         :class="{
@@ -11,25 +21,39 @@
         @click="onBet(place)"
       >
         <div
-          v-if="place === 'red'"
-          class="flex justify-between items-center bg-red text-white p-4"
+          class="flex justify-between items-center text-white p-4"
+          :class="{
+            'bg-red': place === 'red',
+            'bg-green': place === 'green',
+            'bg-black': place === 'black',
+          }"
         >
-          <p>1 to 7</p>
-          <p>WIN 2x</p>
-        </div>
-        <div
-          v-if="place === 'green'"
-          class="flex justify-between items-center bg-green text-white p-4"
-        >
-          <p>0</p>
-          <p>WIN 14x</p>
-        </div>
-        <div
-          v-if="place === 'black'"
-          class="flex justify-between items-center bg-black text-white p-4"
-        >
-          <p>8 to 14</p>
-          <p>WIN 2x</p>
+          <div class="flex gap-x-2 items-center">
+            <p class="border border-solid p-2">
+              {{
+                place === 'green'
+                  ? '0'
+                  : place === 'black'
+                    ? '8 to 14'
+                    : '1 to 7'
+              }}
+            </p>
+            <p class="flex items-center gap-x-2">
+              <span>{{ currentBet[place] ? 'Bet Placed:' : `Place bet` }}</span>
+              <span v-if="currentBet[place]" class="flex items-center gap-x-2">
+                <img
+                  src="@/assets/money_img.svg"
+                  width="16"
+                  height="16"
+                  alt="money icon"
+                />
+                <span>
+                  {{ currentBet[place] }}
+                </span>
+              </span>
+            </p>
+          </div>
+          <p>{{ place === 'green' ? 'WIN 14x' : 'WIN 2x' }}</p>
         </div>
       </button>
 
@@ -43,7 +67,18 @@
               height="16"
               alt="money icon"
             />
-            <p ref="total">0</p>
+            <p
+              :class="{
+                'text-green': currentRollColor === place,
+                'text-red': currentRollColor && currentRollColor !== place,
+              }"
+            >
+              <span v-if="currentRollColor === place">+</span>
+              <span v-if="currentRollColor && currentRollColor !== place"
+                >-</span
+              >
+              <span ref="total">0</span>
+            </p>
           </div>
         </div>
         <ul v-if="betList[place]?.length" class="mt-4 space-y-2">
@@ -52,7 +87,18 @@
             class="flex justify-between items-center"
           >
             <h3>{{ player.username }}</h3>
-            <p>{{ player.betAmount }}</p>
+            <p
+              :class="{
+                'text-green': currentRollColor === place,
+                'text-red': currentRollColor && currentRollColor !== place,
+              }"
+            >
+              <span v-if="currentRollColor === place">+</span>
+              <span v-if="currentRollColor && currentRollColor !== place"
+                >-</span
+              >
+              {{ player.betAmount }}
+            </p>
           </li>
         </ul>
       </div>
@@ -64,7 +110,7 @@
 import { animateMoney, roundMoney } from '@/helper/util'
 import { useGameStore } from '@/store/game'
 import { useUserStore } from '@/store/user'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 import { BetList, BetListTotal, BetTotal, RollColor } from '@/types/game'
 
@@ -97,15 +143,26 @@ const betListTotal = ref<BetListTotal>({
   },
 })
 const total = ref<HTMLElement[] | null>(null)
+const currentRollColor = ref<RollColor | null>(null)
 
 // socket
-socket.on('game:waiting', ({ betList: list, betListTotal: listTotal }) => {
-  betList.value = list
-  betListTotal.value = listTotal
-  animationTotal()
+socket.on(
+  'game:waiting',
+  ({
+    betList: list,
+    betListTotal: listTotal,
+  }: {
+    betList: BetList
+    betListTotal: BetListTotal
+  }) => {
+    currentRollColor.value = null
+    betList.value = list
+    betListTotal.value = listTotal
+    animationTotal()
 
-  isBetEnabled.value = true
-})
+    isBetEnabled.value = true
+  }
+)
 socket.on('game:waiting-timer', () => {
   isBetEnabled.value = true
 })
@@ -114,7 +171,13 @@ socket.on('game:rolling', () => {
 })
 socket.on(
   'game:choosing-list',
-  ({ betList: list, betListTotal: listTotal }) => {
+  ({
+    betList: list,
+    betListTotal: listTotal,
+  }: {
+    betList: BetList
+    betListTotal: BetListTotal
+  }) => {
     betList.value = list
     betListTotal.value = listTotal
     animationTotal()
@@ -127,6 +190,20 @@ socket.on('game:refresh-user', async () => {
     console.error(error)
   }
 })
+socket.on(
+  'game:result',
+  ({
+    rollColor,
+    betListTotal: listTotal,
+  }: {
+    rollColor: RollColor
+    betListTotal: BetListTotal
+  }) => {
+    currentRollColor.value = rollColor
+    betListTotal.value = listTotal
+    animationTotal()
+  }
+)
 
 // func
 const onBet = async (place: string) => {
@@ -148,10 +225,34 @@ const animationTotal = () => {
   })
 }
 
+// computed
+const currentBet = computed(() => {
+  const betPlace = {
+    red: 0,
+    green: 0,
+    black: 0,
+  }
+  Object.keys(betList.value).map((place, index) => {
+    const key = place as keyof BetList
+    const user = betList.value[key].find(
+      (user) => user.username === userStore.username
+    )
+    if (user) {
+      betPlace[key] = user.betAmount
+    }
+  })
+  return betPlace
+})
+
+// hook
 onMounted(async () => {
-  const res = await socket.emitWithAck('game:status')
-  if (res.status === 'OK') {
-    isBetEnabled.value = res.data.isBetEnabled
+  try {
+    const res = await socket.emitWithAck('game:status')
+    if (res.status === 'OK') {
+      isBetEnabled.value = res.data.isBetEnabled
+    }
+  } catch (err) {
+    console.error(err)
   }
 })
 </script>

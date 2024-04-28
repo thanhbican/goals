@@ -2,6 +2,11 @@ const roundMoney = (amount: number) => {
   return Math.round(amount * 100) / 100
 }
 
+function toFixedNoRounding(number: number) {
+  const factor = Math.pow(10, 2)
+  return Math.floor(number * factor) / factor
+}
+
 const countDecimals = (number: number) => {
   if (!number) return 0
 
@@ -39,4 +44,4 @@ const animateMoney = (
   }, 1)
 }
 
-export { roundMoney, animateMoney, countDecimals }
+export { roundMoney, animateMoney, countDecimals, toFixedNoRounding }

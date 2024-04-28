@@ -27,7 +27,6 @@ import UserInfo from '../user/UserInfo.vue'
 const userStore = useUserStore()
 
 onMounted(() => {
-  //first load
   userStore.getUser()
 })
 </script>
