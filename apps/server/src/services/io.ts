@@ -7,6 +7,7 @@ import { currentUser } from '../middlewares/currentUser'
 import { corsOptions } from '../utils/cors'
 import { initChat } from './chat'
 import { initGame } from './game'
+import { initOnlineUser } from './onlineUser'
 
 const initIo = (
   server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>
@@ -30,6 +31,7 @@ const initIo = (
   /** Client connect */
   io.on('connection', (socket) => {
     initChat({ socket })
+    initOnlineUser({ io, socket })
   })
 }
 

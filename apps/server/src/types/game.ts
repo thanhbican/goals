@@ -39,6 +39,7 @@ export interface GameConfig {
   timerAwardingDuration: number
   updateInterval: number
   status: string
+  rollColor: RollColor | null
 }
 
 export type RollColor = 'red' | 'green' | 'black'

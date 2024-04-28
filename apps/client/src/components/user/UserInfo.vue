@@ -32,9 +32,7 @@ const userStore = useUserStore()
 const logout = async () => {
   try {
     await userApi.logout()
-    socket.on('disconnect', () => {
-      socket.connect()
-    })
+    socket.disconnect()
     userStore.resetUser()
   } catch (err) {
     console.error(err)

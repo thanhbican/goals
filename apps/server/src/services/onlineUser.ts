@@ -1,8 +1,33 @@
-const onlineUser = 0
+import { Request } from 'express'
 
-// onlineUser++
-//   io.emit('user:online', onlineUser);
+import { OnlineUserSocket } from '../types/onlineUser'
 
-// io.on('disconnect', () => {
-//   io.emit('user:online', onlineUser);
-// })
+let onlineUsers: string[] = []
+
+const initOnlineUser = ({ io, socket }: OnlineUserSocket) => {
+  console.log('connect')
+  const req = socket.request as Request
+  const currentUser = req.currentUser
+
+  if (!currentUser) {
+    io.emit('user:online', { onlineUsers: onlineUsers.length })
+    return
+  }
+
+  const { id } = currentUser
+
+  const existUser = onlineUsers.find((userId) => userId === id)
+  if (!existUser) {
+    onlineUsers.push(id)
+  }
+
+  // Emit the updated user list
+  io.emit('user:online', { onlineUsers: onlineUsers.length })
+
+  socket.on('disconnect', () => {
+    onlineUsers = onlineUsers.filter((userId) => userId !== id)
+    io.emit('user:online', { onlineUsers: onlineUsers.length })
+  })
+}
+
+export { initOnlineUser }

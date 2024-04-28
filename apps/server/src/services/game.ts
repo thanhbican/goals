@@ -60,6 +60,7 @@ const config: GameConfig = {
   timerAwardingDuration: 5000,
   updateInterval: 10,
   status: 'none',
+  rollColor: null,
 }
 
 const gameChoose = ({ io, socket }: GameSocketEvent) => {
@@ -218,6 +219,7 @@ const gameReset = ({ io }: GameSocket) => {
       length: 0,
     },
   }
+  config.rollColor = null
   // start game again
   gameWaiting({ io })
 }
@@ -253,6 +255,7 @@ const gameAwarding = async (
   { rollColor, rate }: { rollColor: RollColor; rate: number }
 ) => {
   config.status = 'rewarding'
+  config.rollColor = rollColor
   config.betListTotal[rollColor].total =
     config.betListTotal[rollColor].total * 2
   io.emit('game:result', { rollColor, betListTotal: config.betListTotal })
@@ -298,9 +301,10 @@ const initGame = ({ io }: GameSocket) => {
     socket.on('game:status', gameStatus())
     socket.on('game:choosing', gameChoose({ io, socket }))
 
-    io.emit('game:choosing-list', {
+    io.emit('game:first-load', {
       betList: config.betList,
       betListTotal: config.betListTotal,
+      rollColor: config.rollColor,
     })
   })
 }

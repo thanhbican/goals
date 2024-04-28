@@ -183,6 +183,23 @@ socket.on(
     animationTotal()
   }
 )
+socket.on(
+  'game:first-load',
+  ({
+    betList: list,
+    betListTotal: listTotal,
+    rollColor,
+  }: {
+    betList: BetList
+    betListTotal: BetListTotal
+    rollColor: RollColor | null
+  }) => {
+    betList.value = list
+    betListTotal.value = listTotal
+    currentRollColor.value = rollColor
+    animationTotal()
+  }
+)
 socket.on('game:refresh-user', async () => {
   try {
     await userStore.getUser()

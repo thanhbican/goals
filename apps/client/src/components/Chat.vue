@@ -4,7 +4,7 @@
       class="fixed top-0 left-0 pt-[50px] h-[calc(100%-100px)] w-[250px] px-2"
     >
       <div class="h-12 text-right">
-        <h1 class="ml-auto text-lg">2</h1>
+        <OnlineUser />
       </div>
 
       <ul
@@ -30,6 +30,8 @@
 </template>
 <script setup lang="ts">
 import { nextTick, reactive, ref } from 'vue'
+
+import OnlineUser from '@/components/OnlineUser.vue'
 
 import { socket } from '../services/socket'
 

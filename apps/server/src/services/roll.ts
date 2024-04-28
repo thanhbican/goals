@@ -16,7 +16,7 @@ let count = 0
 const generateRoll = () => {
   count += 1
   const round = count + ''
-  console.log(round)
+  // console.log(round)
   // console.log(serverSeed)
   const hash = sha256(serverSeed + '-' + publicSeed + '-' + round)
   const roll = parseInt(hash.substring(0, 8), 16) % 15
@@ -34,8 +34,8 @@ const generateRoll = () => {
     rollColor = 'black'
     rate = 2
   }
-  console.log(`Roll: ${roll}`)
-  console.log(`Colour: ${rollColor}`)
+  // console.log(`Roll: ${roll}`)
+  // console.log(`Colour: ${rollColor}`)
   return { roll, rollColor, rate }
 }
 
