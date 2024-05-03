@@ -111,6 +111,8 @@ const gameChoose = ({ io, socket }: GameSocketEvent) => {
         betListTotal: config.betListTotal,
       })
 
+      socket.join(user.username)
+
       callback({
         status: 'OK',
         data: {
@@ -268,6 +270,7 @@ const gameAwarding = async (
   await User.bulkWrite(
     users.map((user) => {
       const winAmount = roundMoney(user.betAmount * rate)
+      io.to(user.username).emit('game:refresh-user')
       return {
         updateOne: {
           filter: { username: user.username },
@@ -276,7 +279,6 @@ const gameAwarding = async (
       }
     })
   )
-  io.emit('game:refresh-user')
 }
 
 const gameStatus = () => {
