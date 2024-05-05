@@ -2,6 +2,8 @@ import { Request } from 'express'
 
 import { roundMoney } from '../../helpers/util'
 import { gameChooseSchema, GameChooseSchema } from '../../lib/validate/game'
+import { Game } from '../models/Game'
+import { Round } from '../models/Round'
 import { User } from '../models/User'
 import {
   Bet,
@@ -142,9 +144,10 @@ const gameRealTimeTimer = ({ io }: GameSocket) => {
   if (timer <= 0) {
     io.emit('game:waiting-timer', 0)
     gameResetTimer()
-    const { rollColor, rate } = gameRolling({ io })
+    const { rollColor, roundId, roll, rate } = gameRolling({ io })
     setTimeout(() => {
       gameAwarding({ io }, { rollColor, rate })
+      gameCreateRound({ io }, { rollColor, roll, roundId })
       setTimeout(() => {
         gameReset({ io })
       }, config.timerAwardingDuration)
@@ -153,6 +156,29 @@ const gameRealTimeTimer = ({ io }: GameSocket) => {
     const formattedTimer = (timer / 1000).toFixed(2) // Convert to seconds with two decimal places
     io.emit('game:waiting-timer', formattedTimer)
   }
+}
+
+const gameCreateRound = async (
+  { io }: GameSocket,
+  {
+    rollColor,
+    roll,
+    roundId,
+  }: { rollColor: RollColor; roll: number; roundId: string }
+) => {
+  const latestGame = await Game.findOne().sort({ createdAt: -1 })
+  if (!latestGame) {
+    return
+  }
+
+  await Round.create({
+    gameId: latestGame.id,
+    roll,
+    rollColor,
+    roundId,
+  })
+
+  io.emit('game:round', { rollColor, roll })
 }
 
 const gameGetPositionRolling = (number: number) => {
@@ -244,11 +270,11 @@ const gameWaiting = ({ io }: GameSocket) => {
 // roll
 const gameRolling = ({ io }: GameSocket) => {
   config.status = 'rolling'
-  const { rollColor, roll, rate } = generateRoll()
+  const { rollColor, roll, rate, roundId } = generateRoll()
   const position = gameGetPositionRolling(roll)
   gameRealTimeRolling({ io }, 525, -position, config.timerRollingDuration)
 
-  return { rollColor, rate }
+  return { rollColor, roll, roundId, rate }
 }
 
 // award and end

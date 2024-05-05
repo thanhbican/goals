@@ -3,13 +3,20 @@ import { model, Schema } from 'mongoose'
 const roundSchema = new Schema(
   {
     gameId: { type: Schema.Types.ObjectId, ref: 'game' },
-    resultNumber: Number,
-    resultColor: String,
-    blackAmount: Number,
-    redAmount: Number,
-    greenAmount: Number,
+    roll: Number,
+    rollColor: String,
+    roundId: String,
   },
-  { _id: false, id: true, timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      transform(doc, ret: any) {
+        ret.id = ret._id
+        delete ret._id
+        delete ret.__v
+      },
+    },
+  }
 )
 
 const Round = model('round', roundSchema)

@@ -5,7 +5,16 @@ const gameSchema = new Schema(
     serverSeed: String,
     publicSeed: String,
   },
-  { _id: false, id: true, timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      transform(doc, ret: any) {
+        ret.id = ret._id
+        delete ret._id
+        delete ret.__v
+      },
+    },
+  }
 )
 
 const Game = model('game', gameSchema)

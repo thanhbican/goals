@@ -1,24 +1,34 @@
 import cron from 'node-cron'
 
+import { Game } from '../models/Game'
 import { RollColor } from '../types/game'
 import { generatePublicSeed } from '../utils/publicSeed'
 import { generateServerSeed } from '../utils/serverSeed'
 import { sha256 } from '../utils/util'
 
-let serverSeed = '',
-  publicSeed = ''
-const generateSeed = () => {
+let serverSeed = ''
+let publicSeed = ''
+
+const generateSeed = async () => {
   serverSeed = generateServerSeed()
   publicSeed = generatePublicSeed()
+
+  const latestGame = await Game.findOne().sort({ createdAt: -1 })
+  if (latestGame) {
+    latestGame.serverSeed = serverSeed
+    await latestGame.save()
+  }
+
+  await Game.create({ publicSeed })
 }
 
 let count = 0
 const generateRoll = () => {
   count += 1
-  const round = count + ''
+  const roundId = count + ''
   // console.log(round)
   // console.log(serverSeed)
-  const hash = sha256(serverSeed + '-' + publicSeed + '-' + round)
+  const hash = sha256(serverSeed + '-' + publicSeed + '-' + roundId)
   const roll = parseInt(hash.substring(0, 8), 16) % 15
 
   let rollColor: RollColor = 'black'
@@ -36,7 +46,7 @@ const generateRoll = () => {
   }
   // console.log(`Roll: ${roll}`)
   // console.log(`Colour: ${rollColor}`)
-  return { roll, rollColor, rate }
+  return { roll, rollColor, rate, roundId }
 }
 
 generateSeed()

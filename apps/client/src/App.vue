@@ -2,6 +2,7 @@
 import Chat from './components/Chat.vue'
 import GameAmount from './components/GameAmount.vue'
 import GameBoard from './components/GameBoard.vue'
+import GameHistory from './components/GameHistory.vue'
 import GamePolicy from './components/GamePolicy.vue'
 import Header from './components/layout/Header.vue'
 import Roulette from './components/Roulette.vue'
@@ -22,6 +23,7 @@ socket.on('disconnect', () => {
         <div class="max-w-[1100px] mx-auto space-y-4">
           <GamePolicy />
           <Roulette />
+          <GameHistory />
           <GameAmount />
           <GameBoard />
         </div>
