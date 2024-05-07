@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="min-h-8">
     <ul class="flex justify-center gap-x-4">
       <li
         v-for="(round, index) in historyRound"
@@ -17,17 +17,11 @@
 import { socket } from '@/services/socket'
 import { ref } from 'vue'
 
-import { RollColor } from '@/types/game'
-
 const historyRound: any = ref([])
 
-socket.on(
-  'game:round',
-  ({ rollColor, roll }: { rollColor: RollColor; roll: number }) => {
-    console.log({ rollColor, roll })
-    historyRound.value.push({ rollColor, roll })
-  }
-)
+socket.on('game:round', (rounds) => {
+  historyRound.value = rounds
+})
 </script>
 
 <style scoped></style>

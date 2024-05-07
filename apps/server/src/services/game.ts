@@ -7,6 +7,7 @@ import { Round } from '../models/Round'
 import { User } from '../models/User'
 import {
   Bet,
+  BetList,
   BetListTotal,
   GameConfig,
   GameSocket,
@@ -95,6 +96,14 @@ const gameChoose = ({ io, socket }: GameSocketEvent) => {
         player.betAmount = roundMoney(player.betAmount + betAmount)
       }
 
+      // sort
+      Object.keys(config.betList).forEach((place) => {
+        const key = place as keyof BetList
+        config.betList[key] = config.betList[key].sort(
+          (a, b) => b.betAmount - a.betAmount
+        )
+      })
+
       Object.keys(config.betList).forEach((place) => {
         const key = place as keyof BetListTotal
         config.betListTotal[key] = {
@@ -109,7 +118,7 @@ const gameChoose = ({ io, socket }: GameSocketEvent) => {
       })
 
       io.emit('game:choosing-list', {
-        betList: config.betList,
+        betList: getLimitConfigBetList(),
         betListTotal: config.betListTotal,
       })
 
@@ -178,7 +187,12 @@ const gameCreateRound = async (
     roundId,
   })
 
-  io.emit('game:round', { rollColor, roll })
+  await getRounds({ io })
+}
+
+const getRounds = async ({ io }: GameSocket) => {
+  const rounds = await Round.find({}).sort({ createdAt: -1 }).limit(10)
+  io.emit('game:round', rounds.reverse())
 }
 
 const gameGetPositionRolling = (number: number) => {
@@ -257,7 +271,7 @@ const gameWaiting = ({ io }: GameSocket) => {
   if (config.intervalId === null) {
     config.status = 'waiting'
     io.emit('game:waiting', {
-      betList: config.betList,
+      betList: getLimitConfigBetList(),
       betListTotal: config.betListTotal,
     })
 
@@ -322,6 +336,15 @@ const gameStatus = () => {
   }
 }
 
+const getLimitConfigBetList = () => {
+  const list = { ...config.betList }
+  Object.keys(list).forEach((place) => {
+    const key = place as keyof BetList
+    list[key] = list[key].slice(0, 10)
+  })
+  return list
+}
+
 const initGame = ({ io }: GameSocket) => {
   gameWaiting({ io })
 
@@ -330,10 +353,12 @@ const initGame = ({ io }: GameSocket) => {
     socket.on('game:choosing', gameChoose({ io, socket }))
 
     io.emit('game:first-load', {
-      betList: config.betList,
+      betList: getLimitConfigBetList(),
       betListTotal: config.betListTotal,
       rollColor: config.rollColor,
     })
+
+    getRounds({ io })
   })
 }
 

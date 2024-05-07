@@ -5,9 +5,9 @@
       :key="place"
       class="col-span-4"
       :class="{
-        'border-2 border-green border-solid': currentRollColor === place,
-        'border-2 border-yellow-400 border-solid':
-          !!currentBet[place] && currentRollColor !== place,
+        // '': currentRollColor === place,
+        // '':
+        //   !!currentBet[place] && currentRollColor !== place,
         'opacity-50': !!!isBetEnabled && currentRollColor !== place,
       }"
     >

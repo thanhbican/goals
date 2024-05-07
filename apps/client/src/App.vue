@@ -4,6 +4,7 @@ import GameAmount from './components/GameAmount.vue'
 import GameBoard from './components/GameBoard.vue'
 import GameHistory from './components/GameHistory.vue'
 import GamePolicy from './components/GamePolicy.vue'
+import GameSound from './components/GameSound.vue'
 import Header from './components/layout/Header.vue'
 import Roulette from './components/Roulette.vue'
 import { socket } from './services/socket'
@@ -26,6 +27,7 @@ socket.on('disconnect', () => {
           <GameHistory />
           <GameAmount />
           <GameBoard />
+          <GameSound />
         </div>
       </div>
     </div>
