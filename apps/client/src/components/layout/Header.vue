@@ -9,10 +9,15 @@
           <span class="text-yellow-400">Roulette</span>
         </h1>
       </div>
-      <div v-if="userStore.isUserLoggedIn">
-        <UserInfo :user="userStore.$state" />
+      <div class="flex-1 flex items-center justify-between">
+        <Navigation />
+        <div>
+          <div v-if="userStore.isUserLoggedIn">
+            <UserInfo :user="userStore.$state" />
+          </div>
+          <AuthModal v-else />
+        </div>
       </div>
-      <AuthModal v-else />
     </div>
   </header>
 </template>
@@ -21,6 +26,7 @@
 import { useUserStore } from '@/store/user'
 import { onMounted } from 'vue'
 
+import Navigation from '../Navigation.vue'
 import AuthModal from '../user/AuthModal.vue'
 import UserInfo from '../user/UserInfo.vue'
 

@@ -1,8 +1,6 @@
-<template>
-  <!-- <button @click="playSound">Play Sound</button> -->
-</template>
+<template></template>
 
-<script setup>
+<script setup lang="ts">
 import audioSrc from '@/assets/sound.mp3'
 import { socket } from '@/services/socket'
 import { onMounted, onUnmounted } from 'vue'
@@ -33,5 +31,3 @@ onUnmounted(() => {
   playSound()
 })
 </script>
-
-<style scoped></style>

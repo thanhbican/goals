@@ -2,41 +2,61 @@
   <button class="btn btn-success" onclick="authModal.showModal()">Login</button>
   <dialog ref="authModal" id="authModal" class="modal">
     <div class="modal-box">
-      <div class="tabs">
+      <div class="tabs mb-4">
         <a
           class="tab tab-bordered"
-          :class="{ 'tab-active': activeTab === 'login' }"
+          :class="{
+            'tab-active bg-green text-black font-bold': activeTab === 'login',
+          }"
           @click="activeTab = 'login'"
           >Login</a
         >
         <a
           class="tab tab-bordered"
-          :class="{ 'tab-active': activeTab === 'signup' }"
+          :class="{
+            'tab-active bg-green text-black font-bold': activeTab === 'signup',
+          }"
           @click="activeTab = 'signup'"
           >Sign In</a
         >
       </div>
 
-      <form @submit="onSubmit" :validation-schema="validationSchema">
-        <input name="username" v-model="username" placeholder="Username" />
-        <span>{{ errors.username }}</span>
-
-        <input
-          name="password"
-          v-model="password"
-          type="password"
-          placeholder="Password"
-        />
-        <span>{{ errors.password }}</span>
-
-        <div v-if="activeTab === 'signup'">
-          <button type="submit">Sign up</button>
+      <form
+        @submit="onSubmit"
+        :validation-schema="validationSchema"
+        class="space-y-4 px-8"
+      >
+        <div>
+          <input
+            name="username"
+            v-model="username"
+            placeholder="Username"
+            class="w-full p-1"
+          />
+          <span class="text-red">{{ errors.username }}</span>
         </div>
-        <div v-if="activeTab === 'login'">
-          <button type="submit">Login In</button>
+
+        <div>
+          <input
+            name="password"
+            v-model="password"
+            type="password"
+            placeholder="Password"
+            class="w-full p-1"
+          />
+          <span class="text-red">{{ errors.password }}</span>
+        </div>
+
+        <div>
+          <button type="submit" class="btn btn-warning btn-sm block w-full">
+            {{ activeTab === 'signup' ? 'Sign up' : 'Login In' }}
+          </button>
         </div>
       </form>
     </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
   </dialog>
 </template>
 
