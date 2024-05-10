@@ -1,5 +1,10 @@
 <template>
-  <dialog ref="policyModal" id="policyModal" class="modal">
+  <dialog
+    v-if="!isPolicyConsent"
+    ref="policyModal"
+    id="policyModal"
+    class="modal"
+  >
     <div class="modal-box">
       <h3 class="font-bold text-lg">Hello!</h3>
       <ul class="py-4 space-y-2">
@@ -7,16 +12,16 @@
           - This website is for myself educational purposes only, not for
           profiteering or illegal purposes
         </li>
-        <li>- Free to sign in and test the game</li>
+        <li>- Free to sign in and test the game with 100$</li>
       </ul>
       <label class="label cursor-pointer w-[200px] ml-auto">
         <span class="label-text">Do not show again</span>
-        <input type="checkbox" class="checkbox" />
+        <input type="checkbox" class="checkbox" v-model="isConsent" />
       </label>
       <div class="modal-action">
         <form method="dialog">
           <!-- if there is a button in form, it will close the modal -->
-          <button class="btn">OK</button>
+          <button class="btn" @click="onClick">OK</button>
         </form>
       </div>
     </div>
@@ -24,9 +29,19 @@
 </template>
 
 <script setup lang="ts">
+import { useWebStore } from '@/store/web'
+import { storeToRefs } from 'pinia'
 import { onMounted, ref } from 'vue'
 
 const policyModal = ref<HTMLDialogElement>()
+const isConsent = ref(false)
+
+const webStore = useWebStore()
+const { isPolicyConsent } = storeToRefs(webStore)
+
+const onClick = () => {
+  webStore.setPolicyConsent(isConsent.value)
+}
 
 onMounted(() => {
   policyModal?.value?.showModal()
