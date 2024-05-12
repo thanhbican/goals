@@ -27,6 +27,11 @@ export interface BetListTotal {
   green: BetTotal
   black: BetTotal
 }
+export interface RoundHistory {
+  roll: number
+  rollColor: string
+  roundId: string
+}
 
 export interface GameConfig {
   isBetEnabled: boolean
@@ -40,6 +45,7 @@ export interface GameConfig {
   updateInterval: number
   status: string
   rollColor: RollColor | null
+  roundHistory: RoundHistory[]
 }
 
 export type RollColor = 'red' | 'green' | 'black'

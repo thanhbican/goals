@@ -19,6 +19,8 @@ const animateMoney = (
   endValue: number,
   duration: number = 200
 ) => {
+  if (!element) return
+
   const startValue = +element.innerText
 
   const startTime = Date.now()
@@ -35,13 +37,22 @@ const animateMoney = (
 
     if (currentTime >= endTime) {
       element.innerText = roundMoney(endValue)
-      // io.emit('game:rolling', endValue)
       clearInterval(interval)
     } else {
       element.innerText = roundMoney(currentValue)
-      // io.emit('game:rolling', currentValue)
     }
   }, 1)
 }
 
-export { roundMoney, animateMoney, countDecimals, toFixedNoRounding }
+const formatDate = (isoDate: string): string => {
+  const date = new Date(isoDate)
+  return date.toISOString().split('T')[0]
+}
+
+export {
+  roundMoney,
+  animateMoney,
+  countDecimals,
+  toFixedNoRounding,
+  formatDate,
+}

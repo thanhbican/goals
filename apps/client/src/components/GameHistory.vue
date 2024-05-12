@@ -1,6 +1,9 @@
 <template>
   <section class="min-h-8">
     <ul class="flex justify-center gap-x-4">
+      {{
+        isLoaded + 'a'
+      }}
       <li
         v-for="(round, index) in historyRound"
         :key="index"
@@ -15,12 +18,27 @@
 
 <script setup lang="ts">
 import { socket } from '@/services/socket'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const historyRound: any = ref([])
+const isLoaded = ref(false)
 
-socket.on('game:round', (rounds) => {
-  historyRound.value = rounds
+socket.on('game:round-history', ({ roundHistory }) => {
+  isLoaded.value = true
+  historyRound.value = roundHistory
+})
+
+onMounted(async () => {
+  if (isLoaded.value) return
+
+  try {
+    const res = await socket.emitWithAck('game:first-load-history')
+    if (res.status === 'OK') {
+      historyRound.value = res.data.roundHistory
+    }
+  } catch (err) {
+    console.error(err)
+  }
 })
 </script>
 

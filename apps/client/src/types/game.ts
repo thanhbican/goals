@@ -18,4 +18,19 @@ export interface BetListTotal {
   red: BetTotal
 }
 
+export interface Game {
+  publicSeed: string
+  createdAt: string
+  serverSeed?: string
+  id: string
+}
+
+export interface GamesResponse {
+  games: Game[]
+  page: number
+  totalPages: number
+  perPage: number
+  totalGames: number
+}
+
 export type RollColor = 'black' | 'red' | 'green'

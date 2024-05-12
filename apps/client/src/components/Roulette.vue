@@ -36,7 +36,9 @@ socket.on('game:rolling', (position: number) => {
 })
 
 const rolling = (position: number) => {
-  wheel.value!.style.backgroundPositionX = position + 'px'
+  if (wheel.value) {
+    wheel.value.style.backgroundPositionX = position + 'px'
+  }
 }
 </script>
 

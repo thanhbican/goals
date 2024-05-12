@@ -70,7 +70,7 @@ import { useField, useForm } from 'vee-validate'
 import { ref } from 'vue'
 
 const activeTab = ref('login')
-const authModal = ref<HTMLDialogElement | null>(null)
+const authModal = ref<HTMLDialogElement>()
 const userStore = useUserStore()
 const validationSchema = toTypedSchema(userSchema)
 
@@ -94,7 +94,6 @@ const onSubmit = handleSubmit(async (values) => {
     socket.disconnect()
     await userStore.getUser()
   } catch (err) {
-    console.log('sam')
     console.error(err)
   }
 })

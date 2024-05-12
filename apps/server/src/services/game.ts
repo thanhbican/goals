@@ -13,6 +13,7 @@ import {
   GameSocket,
   GameSocketEvent,
   RollColor,
+  RoundHistory,
 } from '../types/game'
 import { CallBack } from '../types/socket'
 import { randomCircleNumber } from '../utils/util'
@@ -64,6 +65,7 @@ const config: GameConfig = {
   updateInterval: 10,
   status: 'none',
   rollColor: null,
+  roundHistory: [],
 }
 
 const gameChoose = ({ io, socket }: GameSocketEvent) => {
@@ -180,19 +182,22 @@ const gameCreateRound = async (
     return
   }
 
-  await Round.create({
+  const newRound = await Round.create({
     gameId: latestGame.id,
     roll,
     rollColor,
     roundId,
   })
 
-  await getRounds({ io })
+  config.roundHistory.push(newRound)
+  config.roundHistory.shift()
+
+  io.emit('game:round-history', { roundHistory: config.roundHistory })
 }
 
-const getRounds = async ({ io }: GameSocket) => {
+const getRounds = async () => {
   const rounds = await Round.find({}).sort({ createdAt: -1 }).limit(10)
-  io.emit('game:round', rounds.reverse())
+  config.roundHistory = rounds.reverse() as RoundHistory[]
 }
 
 const gameGetPositionRolling = (number: number) => {
@@ -345,20 +350,54 @@ const getLimitConfigBetList = () => {
   return list
 }
 
+const getFirstLoadHistory = () => {
+  return (callback: CallBack) => {
+    if (typeof callback !== 'function') {
+      return
+    }
+    callback({
+      status: 'OK',
+      data: {
+        roundHistory: config.roundHistory,
+      },
+    })
+  }
+}
+const getFirstLoadBoard = () => {
+  return (callback: CallBack) => {
+    if (typeof callback !== 'function') {
+      return
+    }
+    callback({
+      status: 'OK',
+      data: {
+        betList: getLimitConfigBetList(),
+        betListTotal: config.betListTotal,
+        rollColor: config.rollColor,
+      },
+    })
+  }
+}
+
 const initGame = ({ io }: GameSocket) => {
+  getRounds()
   gameWaiting({ io })
 
   io.on('connection', (socket) => {
     socket.on('game:status', gameStatus())
     socket.on('game:choosing', gameChoose({ io, socket }))
+    socket.on('game:first-load-history', getFirstLoadHistory())
+    socket.on('game:first-load-board', getFirstLoadBoard())
 
-    io.emit('game:first-load', {
+    io.emit('game:first-load-board', {
       betList: getLimitConfigBetList(),
       betListTotal: config.betListTotal,
       rollColor: config.rollColor,
     })
 
-    getRounds({ io })
+    io.emit('game:round-history', {
+      roundHistory: config.roundHistory,
+    })
   })
 }
 

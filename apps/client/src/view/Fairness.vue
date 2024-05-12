@@ -22,8 +22,9 @@
       <p>Players can replicate any past roll by using the code below.</p>
       <pre>
         <div class="dark bg-gray-950 rounded-md border-[0.5px] border-token-border-medium">
-        const serverSeed =
-        const publicSeed =
+        const serverSeed = '0ecb9d89c9936fbc42180cc1123079db17eb8dd833a6c5f3700e62c82ae69407'
+        const publicSeed = '34161117192806361336'
+        const roundId = '1'
         const hash = sha256(serverSeed + '-' + publicSeed + '-' + roundId)
         const roll = parseInt(hash.substring(0, 8), 16) % 15
         if (roll === 0) { rollColor = 'green'}
@@ -35,45 +36,65 @@
       </pre>
     </div>
 
-    <div class="overflow-x-auto">
+    <div v-if="isLoading" class="w-full flex justify-center items-center">
+      <span class="loading loading-spinner text-info"></span>
+    </div>
+    <div v-else class="overflow-x-auto">
       <table class="table">
         <!-- head -->
         <thead>
           <tr>
-            <th></th>
-            <th>Name</th>
-            <th>Job</th>
-            <th>Favorite Color</th>
+            <th class="text-white">DATE</th>
+            <th class="text-white">SERVER SEED</th>
+            <th class="text-white">PUBLIC SEED</th>
+            <th class="text-white">ROLLS</th>
           </tr>
         </thead>
         <tbody>
-          <!-- row 1 -->
-          <tr>
-            <th>1</th>
-            <td>Cy Ganderton</td>
-            <td>Quality Control Specialist</td>
-            <td>Blue</td>
-          </tr>
-          <!-- row 2 -->
-          <tr>
-            <th>2</th>
-            <td>Hart Hagerty</td>
-            <td>Desktop Support Technician</td>
-            <td>Purple</td>
-          </tr>
-          <!-- row 3 -->
-          <tr>
-            <th>3</th>
-            <td>Brice Swyre</td>
-            <td>Tax Accountant</td>
-            <td>Red</td>
+          <tr v-for="game in gameList?.games" :key="game.id">
+            <td>{{ formatDate(game.createdAt) }}</td>
+            <td>{{ game.serverSeed }}</td>
+            <td>{{ game.publicSeed }}</td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <div class="join">
+      <button
+        v-for="(page, index) in gameList?.totalPages"
+        :key="index"
+        class="join-item btn"
+        :class="{ 'btn-active': page === gameList?.page }"
+        @click="fetchGameList(page)"
+      >
+        {{ page }}
+      </button>
+    </div>
   </section>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { getGames } from '@/api/gameApi'
+import { formatDate } from '@/helper/util'
+import { onMounted, ref } from 'vue'
+
+import { GamesResponse } from '@/types/game'
+
+const gameList = ref<GamesResponse | null>(null)
+const isLoading = ref(false)
+
+const fetchGameList = async (page: number) => {
+  isLoading.value = true
+  gameList.value = await getGames(page)
+  isLoading.value = false
+}
+
+onMounted(async () => {
+  isLoading.value = true
+  gameList.value = await getGames()
+  isLoading.value = false
+})
+</script>
 
 <style scoped></style>

@@ -84,6 +84,7 @@
         <ul v-if="betList[place]?.length" class="mt-4 space-y-2">
           <li
             v-for="player in betList[place]"
+            :key="player.username"
             class="flex justify-between items-center"
           >
             <h3>{{ player.username }}</h3>
@@ -144,6 +145,7 @@ const betListTotal = ref<BetListTotal>({
 })
 const total = ref<HTMLElement[] | null>(null)
 const currentRollColor = ref<RollColor | null>(null)
+const isLoaded = ref(false)
 
 // socket
 socket.on(
@@ -184,7 +186,7 @@ socket.on(
   }
 )
 socket.on(
-  'game:first-load',
+  'game:first-load-board',
   ({
     betList: list,
     betListTotal: listTotal,
@@ -194,6 +196,7 @@ socket.on(
     betListTotal: BetListTotal
     rollColor: RollColor | null
   }) => {
+    isLoaded.value = true
     betList.value = list
     betListTotal.value = listTotal
     currentRollColor.value = rollColor
@@ -264,9 +267,19 @@ const currentBet = computed(() => {
 // hook
 onMounted(async () => {
   try {
-    const res = await socket.emitWithAck('game:status')
-    if (res.status === 'OK') {
-      isBetEnabled.value = res.data.isBetEnabled
+    const responseGameStatus = await socket.emitWithAck('game:status')
+    if (responseGameStatus.status === 'OK') {
+      isBetEnabled.value = responseGameStatus.data.isBetEnabled
+    }
+
+    if (isLoaded.value) return
+    const responseLoadHistory = await socket.emitWithAck(
+      'game:first-load-board'
+    )
+    if (responseLoadHistory.status === 'OK') {
+      betList.value = responseLoadHistory.data.betList
+      betListTotal.value = responseLoadHistory.data.betListTotal
+      currentRollColor.value = responseLoadHistory.data.currentRollColor
     }
   } catch (err) {
     console.error(err)

@@ -1,4 +1,11 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema, Types } from 'mongoose'
+
+interface RoundDoc extends Document {
+  gameId: Types.ObjectId
+  roll: number
+  rollColor: string
+  roundId: string
+}
 
 const roundSchema = new Schema(
   {
@@ -19,6 +26,6 @@ const roundSchema = new Schema(
   }
 )
 
-const Round = model('round', roundSchema)
+const Round = model<RoundDoc>('round', roundSchema)
 
 export { Round }

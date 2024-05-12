@@ -15,7 +15,7 @@
           <div v-if="userStore.isUserLoggedIn">
             <UserInfo :user="userStore.$state" />
           </div>
-          <AuthModal v-else />
+          <!-- <AuthModal v-else /> -->
         </div>
       </div>
     </div>

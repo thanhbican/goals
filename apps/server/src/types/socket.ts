@@ -1,9 +1,9 @@
-interface ChatCallbackResponse {
+interface CallbackResponse {
   status: 'OK' | 'ERROR'
   data?: {}
   error?: unknown
 }
 
 export interface CallBack {
-  (response: ChatCallbackResponse): void
+  (response: CallbackResponse): void
 }

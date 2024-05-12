@@ -29,7 +29,7 @@
   </aside>
 </template>
 <script setup lang="ts">
-import { nextTick, reactive, ref } from 'vue'
+import { inject, nextTick, reactive, ref } from 'vue'
 
 import OnlineUser from '@/components/OnlineUser.vue'
 
@@ -38,19 +38,30 @@ import { socket } from '../services/socket'
 const chatValue = ref('')
 const chats: any = reactive([])
 const chatTable = ref<HTMLElement | null>(null)
+const showModal = inject('showModal')
 
 const onChat = async () => {
-  const payload = {
-    message: chatValue.value,
-  }
-  const res = await socket.emitWithAck('chat:send', payload)
-  if (res.status === 'OK') {
-    chats.push(res.data.message)
-    chatValue.value = ''
-    if (chatTable.value) {
-      await nextTick()
-      chatTable.value.scrollTop = chatTable.value.scrollHeight
+  try {
+    const payload = {
+      message: chatValue.value,
     }
+    const res = await socket.emitWithAck('chat:send', payload)
+    console.log(res)
+    if (res.status === 'OK') {
+      chats.push(res.data.message)
+      chatValue.value = ''
+      if (chatTable.value) {
+        await nextTick()
+        chatTable.value.scrollTop = chatTable.value.scrollHeight
+      }
+    } else {
+      // console.log(showModal);
+      // if (showModal) {
+      //   showModal()
+      // }
+    }
+  } catch (err) {
+    console.log('z')
   }
 }
 

@@ -1,19 +1,9 @@
-import { Model, model, Schema, Types } from 'mongoose'
+import { model, Schema, Types } from 'mongoose'
 
-import { roundMoney } from '../../helpers/util'
-
-interface UserAttrs {
-  username: string
-  password: string
-  balance: Types.Decimal128
-}
 interface UserDoc extends Document {
   username: string
   password: string
   balance: Types.Decimal128
-}
-interface UserModel extends Model<UserDoc> {
-  build(attrs: UserAttrs): UserDoc
 }
 
 const userSchema = new Schema(
@@ -46,6 +36,6 @@ const userSchema = new Schema(
   }
 )
 
-const User = model<UserDoc, UserModel>('user', userSchema)
+const User = model<UserDoc>('user', userSchema)
 
 export { User }

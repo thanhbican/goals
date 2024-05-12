@@ -14,7 +14,10 @@ const sendChat = ({ socket }: ChatSocket) => {
       chatSchema.parse(payload)
       const req = socket.request as Request
       const currentUser = req.currentUser
-      if (!currentUser) return
+      if (!currentUser)
+        return callback({
+          status: 'ERROR',
+        })
 
       const message = {
         from: currentUser.username,
