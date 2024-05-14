@@ -29,7 +29,8 @@
   </aside>
 </template>
 <script setup lang="ts">
-import { inject, nextTick, reactive, ref } from 'vue'
+import { useAuthModalStore } from '@/store/authModal'
+import { nextTick, reactive, ref } from 'vue'
 
 import OnlineUser from '@/components/OnlineUser.vue'
 
@@ -38,7 +39,7 @@ import { socket } from '../services/socket'
 const chatValue = ref('')
 const chats: any = reactive([])
 const chatTable = ref<HTMLElement | null>(null)
-const showModal = inject('showModal')
+const authModal = useAuthModalStore()
 
 const onChat = async () => {
   try {
@@ -46,7 +47,6 @@ const onChat = async () => {
       message: chatValue.value,
     }
     const res = await socket.emitWithAck('chat:send', payload)
-    console.log(res)
     if (res.status === 'OK') {
       chats.push(res.data.message)
       chatValue.value = ''
@@ -55,13 +55,10 @@ const onChat = async () => {
         chatTable.value.scrollTop = chatTable.value.scrollHeight
       }
     } else {
-      // console.log(showModal);
-      // if (showModal) {
-      //   showModal()
-      // }
+      authModal.openModal()
     }
   } catch (err) {
-    console.log('z')
+    console.error(err)
   }
 }
 

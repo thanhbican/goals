@@ -1,6 +1,6 @@
 <template>
   <section
-    v-if="state"
+    v-if="!isPolicyGotIt"
     class="bg-grey flex justify-between items-center px-10 py-2"
   >
     <h2>
@@ -16,11 +16,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { useWebStore } from '@/store/web'
+import { storeToRefs } from 'pinia'
 
-const state = ref(true)
+const webStore = useWebStore()
+const { isPolicyGotIt } = storeToRefs(webStore)
 const onChangeState = () => {
-  state.value = false
+  webStore.setPolicyGotIt(true)
 }
 </script>
 

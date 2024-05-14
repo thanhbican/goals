@@ -9,30 +9,42 @@ import { sha256 } from '../utils/util'
 
 let serverSeed = ''
 let publicSeed = ''
-let count = ''
 let countNumber = 0
 
+const isCreatedToday = (date: Date) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const creationDate = new Date(date)
+  creationDate.setHours(0, 0, 0, 0)
+  return creationDate.getTime() === today.getTime()
+}
+
 const generateSeed = async () => {
-  serverSeed = generateServerSeed()
-  publicSeed = generatePublicSeed()
-  console.log(serverSeed + '-' + publicSeed)
+  // Fetch the latest Round and Game simultaneously
+  const [round, latestGame] = await Promise.all([
+    Round.findOne().sort({ createdAt: -1 }),
+    Game.findOne().sort({ createdAt: -1 }),
+  ])
 
-  const round = await Round.findOne().sort({ createdAt: -1 })
-  count = round?.roundId || '0'
-  countNumber = parseInt(count)
+  countNumber = parseInt(round?.roundId || '0', 10)
+  let serverSeed, publicSeed
 
-  const latestGame = await Game.findOne().sort({ createdAt: -1 })
-  if (latestGame) {
-    latestGame.serverSeed = serverSeed
-    await latestGame.save()
+  if (latestGame && isCreatedToday(latestGame.createdAt)) {
+    serverSeed = latestGame.serverSeed
+    publicSeed = latestGame.publicSeed
+  } else {
+    serverSeed = generateServerSeed()
+    publicSeed = generatePublicSeed()
+    await Game.create({ publicSeed, serverSeed })
   }
 
-  await Game.create({ publicSeed })
+  console.log(serverSeed + '-' + publicSeed)
 }
 
 const generateRoll = () => {
   countNumber += 1
   const roundId = countNumber.toString()
+  console.log(roundId)
   const hash = sha256(serverSeed + '-' + publicSeed + '-' + roundId)
   const roll = parseInt(hash.substring(0, 8), 16) % 15
 

@@ -20,7 +20,7 @@ export interface BetListTotal {
 
 export interface Game {
   publicSeed: string
-  createdAt: string
+  date: string
   serverSeed?: string
   id: string
 }

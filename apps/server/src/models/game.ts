@@ -1,5 +1,10 @@
 import { model, Schema } from 'mongoose'
 
+interface GameDoc extends Document {
+  serverSeed: string
+  publicSeed: string
+  createdAt: NativeDate
+}
 const gameSchema = new Schema(
   {
     serverSeed: String,
@@ -17,6 +22,6 @@ const gameSchema = new Schema(
   }
 )
 
-const Game = model('game', gameSchema)
+const Game = model<GameDoc>('game', gameSchema)
 
 export { Game }

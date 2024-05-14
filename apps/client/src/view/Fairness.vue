@@ -52,7 +52,7 @@
         </thead>
         <tbody>
           <tr v-for="game in gameList?.games" :key="game.id">
-            <td>{{ formatDate(game.createdAt) }}</td>
+            <td>{{ formatDate(game.date) }}</td>
             <td>{{ game.serverSeed }}</td>
             <td>{{ game.publicSeed }}</td>
           </tr>

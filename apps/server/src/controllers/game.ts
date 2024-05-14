@@ -12,8 +12,28 @@ const getGames = async (req: Request, res: Response) => {
     .skip((page - 1) * perPage)
     .limit(perPage)
 
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const processedGames = games.map((game) => {
+    const createdAt = new Date(game.createdAt)
+    createdAt.setHours(0, 0, 0, 0)
+
+    if (createdAt.getTime() === today.getTime()) {
+      // Send only publicSeed if the game was created today
+      return { publicSeed: game.publicSeed, date: game.createdAt }
+    } else {
+      // Send both publicSeed and serverSeed otherwise
+      return {
+        publicSeed: game.publicSeed,
+        serverSeed: game.serverSeed,
+        date: game.createdAt,
+      }
+    }
+  })
+
   res.status(200).json({
-    games,
+    games: processedGames,
     page,
     totalPages,
     perPage,

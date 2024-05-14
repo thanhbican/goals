@@ -287,6 +287,4 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-/* Add your scoped styles here */
-</style>
+<style scoped></style>
