@@ -53,8 +53,19 @@
         <tbody>
           <tr v-for="game in gameList?.games" :key="game.id">
             <td>{{ formatDate(game.date) }}</td>
-            <td>{{ game.serverSeed }}</td>
+            <td :class="{ 'text-yellow-300': !game.serverSeed }">
+              {{
+                game.serverSeed
+                  ? game.serverSeed
+                  : 'Please wait until the end of today'
+              }}
+            </td>
             <td>{{ game.publicSeed }}</td>
+            <td>
+              <RouterLink :to="`/history/rounds/${game.id}`"
+                >Click here for all rounds</RouterLink
+              >
+            </td>
           </tr>
         </tbody>
       </table>

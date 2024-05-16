@@ -1,7 +1,7 @@
 <template>
-  <aside class="flex flex-col flex-nowrap w-[250px] px-4 bg-grey">
+  <aside class="flex flex-col flex-nowrap w-[250px] px-4">
     <div
-      class="fixed top-0 left-0 pt-[50px] h-[calc(100%-100px)] w-[250px] px-2"
+      class="fixed top-0 left-0 pt-[50px] h-[calc(100%-100px)] w-[250px] bg-grey"
     >
       <div class="h-12 text-right">
         <OnlineUser />
@@ -9,7 +9,7 @@
 
       <ul
         ref="chatTable"
-        class="h-full block space-y-2 overflow-y-auto py-4 chat"
+        class="h-full block space-y-2 overflow-y-auto py-4 px-2 chat bg-grey"
       >
         <li class="break-words" v-for="(chat, index) in chats" :key="index">
           <span class="text-white font-bold">{{ chat.from }}</span

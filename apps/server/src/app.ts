@@ -14,6 +14,7 @@ import { currentUser } from './middlewares/currentUser'
 import { errorHandler } from './middlewares/errorHandler'
 import { authRouter } from './routers/auth'
 import { gameRouter } from './routers/game'
+import { roundRouter } from './routers/round'
 import { corsOptions } from './utils/cors'
 
 const app = express() as Express
@@ -33,6 +34,7 @@ app.use(cors(corsOptions))
 app.use(currentUser)
 app.use('/api', authRouter)
 app.use('/api', gameRouter)
+app.use('/api', roundRouter)
 app.use(errorHandler)
 
 app.get('/', (req, res) => {

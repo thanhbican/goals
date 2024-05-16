@@ -21,13 +21,14 @@ const getGames = async (req: Request, res: Response) => {
 
     if (createdAt.getTime() === today.getTime()) {
       // Send only publicSeed if the game was created today
-      return { publicSeed: game.publicSeed, date: game.createdAt }
+      return { publicSeed: game.publicSeed, date: game.createdAt, id: game.id }
     } else {
       // Send both publicSeed and serverSeed otherwise
       return {
         publicSeed: game.publicSeed,
         serverSeed: game.serverSeed,
         date: game.createdAt,
+        id: game.id,
       }
     }
   })

@@ -109,6 +109,7 @@
 
 <script setup lang="ts">
 import { animateMoney, roundMoney } from '@/helper/util'
+import { useAuthModalStore } from '@/store/authModal'
 import { useGameStore } from '@/store/game'
 import { useUserStore } from '@/store/user'
 import { computed, onMounted, ref } from 'vue'
@@ -120,6 +121,7 @@ import { socket } from '../services/socket'
 // store
 const gameStore = useGameStore()
 const userStore = useUserStore()
+const authModalStore = useAuthModalStore()
 
 // variable
 const places = ['red', 'green', 'black'] as const
@@ -227,6 +229,9 @@ socket.on(
 
 // func
 const onBet = async (place: string) => {
+  if (!userStore.isUserLoggedIn) {
+    authModalStore.openModal()
+  }
   if (gameStore.amount && gameStore.amount <= userStore.balance) {
     const betAmount = roundMoney(gameStore.amount)
     const res = await socket.emitWithAck('game:choosing', { place, betAmount })

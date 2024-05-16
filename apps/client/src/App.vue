@@ -1,10 +1,10 @@
 <template>
-  <div data-theme="dark">
+  <div data-theme="dark" class="min-h-screen">
     <Header />
     <PolicyModal />
-    <div class="flex h-screen pt-[50px]">
+    <div class="flex pt-[50px]">
       <Chat />
-      <div class="flex-1 overflow-hidden px-8 pt-4">
+      <div class="flex-1 px-8 pt-4">
         <div class="max-w-[1100px] mx-auto space-y-4">
           <router-view></router-view>
         </div>

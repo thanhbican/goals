@@ -1,20 +1,13 @@
-import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
-import jwt from 'jsonwebtoken'
 
-import { BadRequestError } from '../errors/status/badRequestError'
-import { NotAuthError } from '../errors/status/notAuthError'
-import { User } from '../models/User'
+import { Round } from '../models/Round'
 
-const getRound = async (req: Request, res: Response) => {
-  const { userId } = req.params
+const getRounds = async (req: Request, res: Response) => {
+  const { gameId } = req.params
 
-  const existUser = await User.findById(userId)
-  if (!existUser) {
-    throw new NotAuthError()
-  }
+  const rounds = await Round.find({ gameId }).sort({ createdAt: -1 })
 
-  res.status(200).send(existUser)
+  res.status(200).send(rounds)
 }
 
-export { getRound }
+export { getRounds }

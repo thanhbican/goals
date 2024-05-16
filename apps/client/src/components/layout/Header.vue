@@ -4,9 +4,11 @@
   >
     <div class="flex items-center justify-between h-full">
       <div class="w-[250px] text-center">
-        <h1 class="font-bold text-2xl space-x-2">
-          <span class="text-white">S4mD</span>
-          <span class="text-yellow-400">Roulette</span>
+        <h1 class="font-bold text-2xl">
+          <RouterLink to="/" class="space-x-2">
+            <span class="text-white">S4mD</span>
+            <span class="text-yellow-400">Roulette</span></RouterLink
+          >
         </h1>
       </div>
       <div class="flex-1 flex items-center justify-between">
