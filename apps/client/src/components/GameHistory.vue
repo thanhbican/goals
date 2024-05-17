@@ -1,6 +1,6 @@
 <template>
   <section class="min-h-8">
-    <ul class="flex justify-center gap-x-4">
+    <ul v-if="historyRound" class="flex justify-center gap-x-4">
       <li
         v-for="round in historyRound"
         :key="round.id"
@@ -17,7 +17,9 @@
 import { socket } from '@/services/socket'
 import { onMounted, ref } from 'vue'
 
-const historyRound: any = ref([])
+import { RoundHistory } from '@/types/round'
+
+const historyRound = ref<RoundHistory[] | null>(null)
 const isLoaded = ref(false)
 
 socket.on('game:round-history', ({ roundHistory }) => {

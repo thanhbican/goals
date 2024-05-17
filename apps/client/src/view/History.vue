@@ -1,29 +1,43 @@
 <template>
-  <!-- <div>{{ rounds }}</div> -->
-  <ul class="flex justify-center gap-x-4">
-    <li
-      v-for="(round, index) in rounds"
-      :key="round.id"
-      class="w-4 h-4 rounded-full flex items-center justify-center p-4 text-white"
-      :class="`bg-${round.rollColor}`"
-    >
-      {{ round.roll }}
-    </li>
-  </ul>
+  <section>
+    <div class="mb-4">
+      <h2 class="text-2xl text-center">Roll History</h2>
+      <p class="text-center text-xl">{{ currentDate }}</p>
+    </div>
+
+    <ul v-if="rounds" class="gap-x-4 gap-y-4 grid grid-cols-10">
+      <li v-for="round in rounds" :key="round.id" class="w-16 h-16 mb-4">
+        <div
+          class="text-xl font-bold col-span-1 rounded-full flex items-center justify-center p-4 text-white"
+          :class="`bg-${round.rollColor}`"
+        >
+          <div>{{ round.roll }}</div>
+        </div>
+        <div class="text-center mt-1 text-sm">Round: {{ round.roundId }}</div>
+      </li>
+    </ul>
+  </section>
 </template>
 
 <script setup lang="ts">
 import { getRounds } from '@/api/roundApi'
-import { onMounted, ref, watch } from 'vue'
-import { onBeforeRouteUpdate, useRoute } from 'vue-router'
+import { formatDate } from '@/helper/util'
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+
+import { RoundResponse } from '@/types/round'
 
 const route = useRoute()
-const rounds = ref([])
+const rounds = ref<RoundResponse | null>(null)
+const currentDate = ref('')
 
 onMounted(async () => {
   const gameId = route.params.gameId as string
   if (gameId) {
     rounds.value = await getRounds(gameId)
+    if (rounds.value.length) {
+      currentDate.value = formatDate(rounds.value[0].createdAt)
+    }
   }
 })
 </script>

@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 const roundMoney = (amount: number) => {
   return Math.round(amount * 100) / 100
 }
@@ -45,8 +47,7 @@ const animateMoney = (
 }
 
 const formatDate = (isoDate: string): string => {
-  const date = new Date(isoDate)
-  return date.toISOString().split('T')[0]
+  return dayjs(isoDate).format('YYYY-MM-DD')
 }
 
 export {

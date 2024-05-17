@@ -190,7 +190,9 @@ const gameCreateRound = async (
   })
 
   config.roundHistory.push(newRound)
-  config.roundHistory.shift()
+  if (config.roundHistory.length >= 9) {
+    config.roundHistory.shift()
+  }
 
   io.emit('game:round-history', { roundHistory: config.roundHistory })
 }
