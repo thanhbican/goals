@@ -19,7 +19,18 @@
         </li>
         <li><span class="text-yellow-300">3 ―</span> Round ID</li>
       </ol>
-      <p>Players can replicate any past roll by using the code below.</p>
+      <p>
+        Players can replicate any past roll by using the code below and can use
+        this
+        <a
+          class="text-yellow-300"
+          href="https://emn178.github.io/online-tools/sha256.html"
+          target="_blank"
+          rel="noopener"
+          >website</a
+        >
+        to test sha256
+      </p>
       <pre>
         <div class="dark bg-gray-950 rounded-md border-[0.5px] border-token-border-medium">
         const serverSeed = '0ecb9d89c9936fbc42180cc1123079db17eb8dd833a6c5f3700e62c82ae69407'

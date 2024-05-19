@@ -9,12 +9,19 @@
       <h3 class="font-bold text-lg">Hello!</h3>
       <ul class="py-4 space-y-2">
         <li class="leading-5">
-          - This website is for myself educational purposes only, not for
-          profiteering or illegal purposes
+          - This website is for educational purposes only and not for
+          profiteering or illegal activities.
         </li>
-        <li>- Free to sign in and test the game with 100$</li>
+        <li class="leading-5">
+          - Feel free to sign up and test the game with $100 in virtual
+          currency.
+        </li>
+        <li class="leading-5">
+          - Currently, this website is hosted in the United States without a
+          CDN, so it may be a bit slow.
+        </li>
       </ul>
-      <label class="label cursor-pointer w-[200px] ml-auto">
+      <label class="label cursor-pointer w-[150px] ml-auto">
         <span class="label-text">Do not show again</span>
         <input type="checkbox" class="checkbox" v-model="isConsent" />
       </label>

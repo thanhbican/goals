@@ -10,7 +10,7 @@ export const useWebStore = defineStore({
   id: 'web',
   state: (): WebState => ({
     isPolicyConsent: false,
-    isSoundEnable: false,
+    isSoundEnable: true,
     isPolicyGotIt: false,
   }),
   getters: {},
