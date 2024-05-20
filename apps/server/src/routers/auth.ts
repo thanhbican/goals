@@ -23,8 +23,8 @@ router.get(
 router.post(
   '/auth/signup',
   [
-    body('username').isString().isLength({ min: 6 }),
-    body('password').isString().isLength({ min: 6 }),
+    body('username').isString().isLength({ min: 4 }),
+    body('password').isString().isLength({ min: 4 }),
   ],
   validateRequest,
   signIn
@@ -32,8 +32,8 @@ router.post(
 router.post(
   '/auth/login',
   [
-    body('username').isString().isLength({ min: 6 }),
-    body('password').isString().isLength({ min: 6 }),
+    body('username').isString().isLength({ min: 4 }),
+    body('password').isString().isLength({ min: 4 }),
   ],
   validateRequest,
   login

@@ -1,6 +1,6 @@
 import { model, Schema, Types } from 'mongoose'
 
-interface UserDoc extends Document {
+export interface UserDoc extends Document {
   username: string
   password: string
   balance: Types.Decimal128
@@ -19,7 +19,7 @@ const userSchema = new Schema(
     },
     balance: {
       type: Schema.Types.Decimal128,
-      default: '500.00', // Store as a string to avoid precision issues
+      default: '100.00', // Store as a string to avoid precision issues
     },
   },
   {

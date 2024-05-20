@@ -4,10 +4,10 @@
       <router-link to="/">Roulette</router-link>
     </li>
     <li class="cursor-pointer">
-      <router-link to="/fairness">Fairness</router-link>
+      <router-link to="/about">About</router-link>
     </li>
     <li class="cursor-pointer">
-      <router-link to="/about">About</router-link>
+      <router-link to="/fairness">Fairness</router-link>
     </li>
     <li class="cursor-pointer">
       <a href="https://s4md.com" target="_blank" rel="noopener">Projects</a>

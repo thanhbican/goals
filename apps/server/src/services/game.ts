@@ -61,7 +61,7 @@ const config: GameConfig = {
   startTime: null,
   timerWaitingDuration: 15000,
   timerRollingDuration: 5000,
-  timerAwardingDuration: 5000,
+  timerAwardingDuration: 2500,
   updateInterval: 10,
   status: 'none',
   rollColor: null,

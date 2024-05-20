@@ -30,7 +30,7 @@ const initIo = (
 
   /** Client connect */
   io.on('connection', (socket) => {
-    initChat({ socket })
+    initChat({ io, socket })
     initOnlineUser({ io, socket })
   })
 }
