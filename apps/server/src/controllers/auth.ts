@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 
 import { BadRequestError } from '../errors/status/badRequestError'
 import { NotAuthError } from '../errors/status/notAuthError'
-import { User } from '../models/User'
+import { User } from '../models/User.ts'
 
 const getCurrentUser = async (req: Request, res: Response) => {
   res.send(req.currentUser || null)

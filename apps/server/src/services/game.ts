@@ -4,7 +4,7 @@ import { roundMoney } from '../../helpers/util'
 import { gameChooseSchema, GameChooseSchema } from '../../lib/validate/game'
 import { Game } from '../models/Game'
 import { Round } from '../models/Round'
-import { User } from '../models/User'
+import { User } from '../models/User.ts'
 import {
   Bet,
   BetList,
