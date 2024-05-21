@@ -1,4 +1,4 @@
-import randomBytes from 'randomBytes'
+import { randomBytes } from 'crypto'
 
 function generateServerSeed() {
   const serverSeed = randomBytes(32).toString('hex')
