@@ -13,7 +13,7 @@
   </div>
   <div class="lg:hidden h-screen flex items-center justify-center mx-8">
     <h2 class="text-2xl font-bold">
-      I've been doing responsive design for many years now, so I'm a bit bored
+      I've been doing responsive perfect pixel design for many years now, so I'm a bit bored
       with it. For this project, the purpose is just for self-learning, so
       please use a PC or a device larger than 1024px, hahaha.
     </h2>

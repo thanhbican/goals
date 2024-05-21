@@ -8,6 +8,7 @@
       </div>
 
       <ul
+        v-if="chats"
         ref="chatTable"
         class="h-full block space-y-2 overflow-y-auto py-4 px-2 chat bg-grey"
       >
@@ -30,14 +31,15 @@
 </template>
 <script setup lang="ts">
 import { useAuthModalStore } from '@/store/authModal'
-import { nextTick, reactive, ref } from 'vue'
+import { nextTick, ref } from 'vue'
 
+import { ChatType } from '@/types/chat'
 import OnlineUser from '@/components/OnlineUser.vue'
 
 import { socket } from '../services/socket'
 
 const chatValue = ref('')
-const chats: any = ref([])
+const chats = ref<ChatType[] | null>(null)
 const chatTable = ref<HTMLElement | null>(null)
 const authModal = useAuthModalStore()
 
@@ -48,7 +50,7 @@ const onChat = async () => {
     }
     const res = await socket.emitWithAck('chat:send', payload)
     if (res.status === 'OK') {
-      chats.value.push(res.data.message)
+      chats.value?.push(res.data.message)
       chatValue.value = ''
       if (chatTable.value) {
         await nextTick()
@@ -63,7 +65,7 @@ const onChat = async () => {
 }
 
 socket.on('chat:sent', async (message) => {
-  chats.value.push(message)
+  chats.value?.push(message)
   if (chatTable.value) {
     await nextTick()
     chatTable.value.scrollTop = chatTable.value.scrollHeight

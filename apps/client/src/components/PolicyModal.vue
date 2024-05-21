@@ -17,8 +17,8 @@
           currency.
         </li>
         <li class="leading-5">
-          - Currently, this website is hosted in the United States without a
-          CDN, so it may be a bit slow.
+          - Currently, this website is hosted in Helsinki, EU, without a CDN,
+          which may cause it to load a bit slowly.
         </li>
       </ul>
       <label class="label cursor-pointer w-[150px] ml-auto">
