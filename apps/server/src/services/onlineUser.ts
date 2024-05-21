@@ -5,7 +5,6 @@ import { OnlineUserSocket } from '../types/onlineUser'
 let onlineUsers: string[] = []
 
 const initOnlineUser = ({ io, socket }: OnlineUserSocket) => {
-  console.log('connect')
   const req = socket.request as Request
   const currentUser = req.currentUser
 

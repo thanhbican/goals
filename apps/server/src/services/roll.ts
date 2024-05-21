@@ -35,8 +35,6 @@ const generateSeed = async () => {
       publicSeed = generatePublicSeed()
       await Game.create({ publicSeed, serverSeed })
     }
-
-    console.log(`${serverSeed}-${publicSeed}`)
   } catch (error) {
     console.error('Error generating seed:', error)
   }
@@ -45,7 +43,6 @@ const generateSeed = async () => {
 const generateRoll = () => {
   countNumber += 1
   const roundId = countNumber.toString()
-  console.log(roundId)
 
   const hash = sha256(`${serverSeed}-${publicSeed}-${roundId}`)
   const roll = parseInt(hash.substring(0, 8), 16) % 15
