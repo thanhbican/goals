@@ -8,7 +8,6 @@
       </div>
 
       <ul
-        v-if="chats"
         ref="chatTable"
         class="h-full block space-y-2 overflow-y-auto py-4 px-2 chat bg-grey"
       >

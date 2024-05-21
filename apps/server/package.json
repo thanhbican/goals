@@ -5,6 +5,7 @@
   "main": "src/server.ts",
   "scripts": {
     "dev": "ts-node-dev --files --exit-child src/server.ts",
+    "start": "ts-node src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -47,6 +48,6 @@
     "@types/node": "^20.12.7",
     "@types/node-cron": "^3.0.11",
     "@types/randombytes": "^2.0.3",
-    "typescript": "^5.4.5"
+    "typescript": "^5.3.3"
   }
 }
