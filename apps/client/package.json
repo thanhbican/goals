@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "pnpm dlx server dist -l 4000"
   },
   "dependencies": {
     "@vee-validate/zod": "^4.12.6",
