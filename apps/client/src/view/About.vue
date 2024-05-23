@@ -4,9 +4,7 @@
       About Routtle
     </h2>
     <p class="text-lg text-gray-700 mb-4">
-      Welcome to <span class="font-bold">S4md Routtle</span>! Our web game
-      combines strategy, fun, and excitement, offering a unique gaming
-      experience for players of all ages.
+      Welcome to <span class="font-bold">S4md Routtle</span>!
     </p>
 
     <h3 class="text-2xl font-bold text-blue-500 mb-2">Our Technology</h3>
@@ -31,18 +29,12 @@
 
     <h2 class="text-2xl font-bold text-blue-500 mb-2">Roadmap</h2>
     <p class="text-lg text-gray-700 mb-4">
-      We are continuously working to improve Routtle. Upcoming updates include
-      integrating <span class="font-bold">Redis</span> into our backend to
-      enhance performance and scalability.
-    </p>
-    <p class="text-lg text-gray-700">
-      Stay tuned for more exciting features and updates!
-    </p>
-    <p class="text-lg text-gray-700 mt-4">
-      Thank you for being a part of the Routtle community. Happy gaming!
+      Upcoming updates include integrating
+      <span class="font-bold">Redis</span> into our backend to enhance
+      performance and scalability.
     </p>
 
-    <p class="text-lg italic mt-4 text-gray-700">
+    <p class="text-lg italic mt-4 text-blue-500">
       *This website is for educational purposes only, not for profiteering or
       illegal use.
     </p>

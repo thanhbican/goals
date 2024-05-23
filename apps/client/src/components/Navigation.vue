@@ -4,16 +4,23 @@
       <router-link to="/">Roulette</router-link>
     </li>
     <li class="cursor-pointer">
-      <router-link to="/about">About</router-link>
-    </li>
-    <li class="cursor-pointer">
       <router-link to="/fairness">Fairness</router-link>
     </li>
     <li class="cursor-pointer">
-      <a href="https://s4md.com" target="_blank" rel="noopener">Projects</a>
+      <router-link to="/about">About</router-link>
     </li>
     <li class="cursor-pointer">
-      <a href="https://github.com/thanhbican/goals" target="_blank" rel="noopener">Github</a>
+      <a href="https://s4md.com" target="_blank" rel="noopener"
+        >Another projects</a
+      >
+    </li>
+    <li class="cursor-pointer">
+      <a
+        href="https://github.com/thanhbican/goals"
+        target="_blank"
+        rel="noopener"
+        >Github</a
+      >
     </li>
   </ul>
 </template>
