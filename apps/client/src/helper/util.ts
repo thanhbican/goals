@@ -1,4 +1,10 @@
 import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.tz.setDefault('UTC')
 
 const roundMoney = (amount: number) => {
   return Math.round(amount * 100) / 100
@@ -47,7 +53,7 @@ const animateMoney = (
 }
 
 const formatDate = (isoDate: string): string => {
-  return dayjs(isoDate).format('YYYY-MM-DD')
+  return dayjs(isoDate).tz('UTC').format('YYYY-MM-DD')
 }
 
 export {
