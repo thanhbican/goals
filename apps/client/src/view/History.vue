@@ -6,9 +6,9 @@
     </div>
 
     <ul v-if="rounds" class="gap-x-4 gap-y-4 grid grid-cols-10">
-      <li v-for="round in rounds" :key="round.id" class="w-16 h-16 mb-4">
+      <li v-for="round in rounds" :key="round.id" class="mb-4 text-center">
         <div
-          class="text-xl font-bold col-span-1 rounded-full flex items-center justify-center p-4 text-white"
+          class="w-16 h-16 mx-auto text-xl font-bold col-span-1 rounded-full flex items-center justify-center p-4 text-white"
           :class="`bg-${round.rollColor}`"
         >
           <div>{{ round.roll }}</div>

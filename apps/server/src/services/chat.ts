@@ -1,6 +1,6 @@
 import { Request } from 'express'
 
-import { ChatSchema, chatSchema } from '../../lib/validate/chat'
+import { ChatSchema, chatSchema } from '../lib/validate/chat'
 import { Chat } from '../models/Chat'
 import { UserDoc } from '../models/User'
 import { ChatConfig, ChatSocket, ChatType } from '../types/chat'

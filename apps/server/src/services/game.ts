@@ -1,7 +1,6 @@
 import { Request } from 'express'
 
-import { roundMoney } from '../../helpers/util'
-import { gameChooseSchema, GameChooseSchema } from '../../lib/validate/game'
+import { gameChooseSchema, GameChooseSchema } from '../lib/validate/game'
 import { Game } from '../models/Game'
 import { Round } from '../models/Round'
 import { User } from '../models/User'
@@ -16,7 +15,7 @@ import {
   RoundHistory,
 } from '../types/game'
 import { CallBack } from '../types/socket'
-import { randomCircleNumber } from '../utils/util'
+import { randomCircleNumber, roundMoney } from '../utils/util'
 import { generateRoll } from './roll'
 
 const numbers: { [key: number]: number } = {

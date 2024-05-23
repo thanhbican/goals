@@ -39,9 +39,6 @@ export const useUserStore = defineStore({
       this.username = null
       this.balance = 0
     },
-    // changeBalance(amount: number) {
-    //   this.balance = roundMoney(this.balance + amount)
-    // },
     setBalance(balance: number) {
       this.balance = balance
     },

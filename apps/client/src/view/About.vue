@@ -41,10 +41,6 @@
   </section>
 </template>
 
-<script setup lang="ts">
-// No additional script needed for this content
-</script>
+<script setup lang="ts"></script>
 
-<style scoped>
-/* Tailwind CSS is applied directly to the template */
-</style>
+<style scoped></style>

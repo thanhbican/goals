@@ -8,4 +8,8 @@ const randomCircleNumber = (min: number, max: number) => {
   return Math.random() * (max - min) + min
 }
 
-export { sha256, randomCircleNumber }
+const roundMoney = (amount: number) => {
+  return Math.round(amount * 100) / 100
+}
+
+export { sha256, randomCircleNumber, roundMoney }

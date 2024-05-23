@@ -131,11 +131,6 @@ const maxBetAmount = () => {
     background: url('@/assets/money_img.svg') center/contain no-repeat;
   }
   input {
-    // &.is-valid {
-    //   &:focus {
-    //     outline: 1px solid #c9302c;
-    //   }
-    // }
     &.is-invalid {
       &:focus {
         outline: 2px solid #c9302c;
