@@ -1,5 +1,5 @@
 const corsOptions = {
-  origin: ['http://localhost:4000'],
+  origin: [process.env.FE_URL],
   credentials: true,
 }
 

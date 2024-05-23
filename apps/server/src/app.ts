@@ -10,6 +10,7 @@ import cookieSession from 'cookie-session'
 import helmet from 'helmet'
 import morgan from 'morgan'
 
+import { NotFoundError } from './errors/status/notFoundError'
 import { currentUser } from './middlewares/currentUser'
 import { errorHandler } from './middlewares/errorHandler'
 import { authRouter } from './routers/auth'
@@ -36,6 +37,10 @@ app.use('/api', authRouter)
 app.use('/api', gameRouter)
 app.use('/api', roundRouter)
 app.use(errorHandler)
+
+app.all('*', async (req, res) => {
+  throw new NotFoundError()
+})
 
 app.get('/', (req, res) => {
   res.status(200).send('ok')
