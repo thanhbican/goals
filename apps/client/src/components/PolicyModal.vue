@@ -17,7 +17,7 @@
           currency.
         </li>
         <li class="leading-5">
-          - Currently, this website is hosted in Helsinki, Finland, EU, without a CDN,
+          - Currently, this website is hosted in <s>Helsinki, Finland, EU, without a CDN</s> (moved to Singapore)
           which may cause it to load a bit slowly.
         </li>
       </ul>

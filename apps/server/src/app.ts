@@ -25,7 +25,7 @@ app.use(json())
 app.use(
   cookieSession({
     signed: false,
-    secure: process.env.NODE_ENV !== 'dev',
+    secure: false, // will fix this shit later, stuck when true despite being on https website already
   })
 )
 app.use(morgan('dev'))

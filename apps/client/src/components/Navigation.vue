@@ -12,6 +12,9 @@
     <li class="cursor-pointer">
       <a href="https://s4md.com" target="_blank" rel="noopener">Projects</a>
     </li>
+    <li class="cursor-pointer">
+      <a href="https://github.com/thanhbican/goals" target="_blank" rel="noopener">Github</a>
+    </li>
   </ul>
 </template>
 
