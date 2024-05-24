@@ -114,7 +114,7 @@ import { useGameStore } from '@/store/game'
 import { useUserStore } from '@/store/user'
 import { computed, onMounted, ref } from 'vue'
 
-import { BetList, BetListTotal, BetTotal, RollColor } from '@/types/game'
+import { BetList, BetListTotal, RollColor } from '@/types/game'
 
 import { socket } from '../services/socket'
 

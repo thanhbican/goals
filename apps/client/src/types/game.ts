@@ -2,6 +2,12 @@ export interface Bet {
   username: string
   betAmount: number
 }
+
+export interface BetState {
+  betAmount: number | null
+  userBalance: number
+  increments: number[]
+}
 export interface BetTotal {
   total: number
   length: number

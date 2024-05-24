@@ -35,11 +35,7 @@ import { useGameStore } from '@/store/game'
 import { useUserStore } from '@/store/user'
 import { ref, watchEffect } from 'vue'
 
-interface BetState {
-  betAmount: number | null
-  userBalance: number
-  increments: number[]
-}
+import { BetState } from '@/types/game'
 
 const initialState: BetState = {
   betAmount: null,

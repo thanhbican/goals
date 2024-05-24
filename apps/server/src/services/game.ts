@@ -304,8 +304,13 @@ const gameAwarding = async (
 ) => {
   config.status = 'rewarding'
   config.rollColor = rollColor
-  config.betListTotal[rollColor].total =
-    config.betListTotal[rollColor].total * 2
+  if (rollColor === 'green') {
+    config.betListTotal[rollColor].total =
+      config.betListTotal[rollColor].total * 14
+  } else {
+    config.betListTotal[rollColor].total =
+      config.betListTotal[rollColor].total * 2
+  }
   io.emit('game:result', { rollColor, betListTotal: config.betListTotal })
 
   const users = config.betList[rollColor]
