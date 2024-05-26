@@ -11,6 +11,7 @@ import {
   GameConfig,
   GameSocket,
   GameSocketEvent,
+  GameSocketOnly,
   RollColor,
   RoundHistory,
 } from '../types/game'
@@ -123,7 +124,7 @@ const gameChoose = ({ io, socket }: GameSocketEvent) => {
         betListTotal: config.betListTotal,
       })
 
-      socket.join(user.username)
+      // socket.join(user.username)
 
       callback({
         status: 'OK',
@@ -314,6 +315,7 @@ const gameAwarding = async (
   io.emit('game:result', { rollColor, betListTotal: config.betListTotal })
 
   const users = config.betList[rollColor]
+  console.log(users)
   if (!users.length) {
     return
   }
@@ -321,6 +323,7 @@ const gameAwarding = async (
   await User.bulkWrite(
     users.map((user) => {
       const winAmount = roundMoney(user.betAmount * rate)
+      console.log('đâshjdasdhaskjdas')
       io.to(user.username).emit('game:refresh-user')
       return {
         updateOne: {
@@ -385,11 +388,22 @@ const getFirstLoadBoard = () => {
   }
 }
 
+const gameRegisterRoom = ({ socket }: GameSocketOnly) => {
+  const request = socket.request as Request
+  const currentUser = request.currentUser
+  if (!currentUser) return
+
+  const { username } = currentUser
+  socket.join(username)
+}
+
 const initGame = ({ io }: GameSocket) => {
   getRounds()
   gameWaiting({ io })
 
   io.on('connection', (socket) => {
+    gameRegisterRoom({ socket })
+
     socket.on('game:status', gameStatus())
     socket.on('game:choosing', gameChoose({ io, socket }))
     socket.on('game:first-load-history', getFirstLoadHistory())

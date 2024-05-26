@@ -3,6 +3,11 @@ import { Server, Socket } from 'socket.io'
 export interface GameSocket {
   io: Server
 }
+
+export interface GameSocketOnly {
+  socket: Socket
+}
+
 export interface GameSocketEvent {
   socket: Socket
   io: Server
