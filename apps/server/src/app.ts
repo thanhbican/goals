@@ -38,12 +38,12 @@ app.use('/api', gameRouter)
 app.use('/api', roundRouter)
 app.use(errorHandler)
 
-app.all('*', async (req, res) => {
-  throw new NotFoundError()
-})
-
 app.get('/', (req, res) => {
   res.status(200).send('ok')
+})
+
+app.all('*', async (req, res) => {
+  throw new NotFoundError()
 })
 
 export { app }

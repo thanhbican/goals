@@ -315,7 +315,7 @@ const gameAwarding = async (
   io.emit('game:result', { rollColor, betListTotal: config.betListTotal })
 
   const users = config.betList[rollColor]
-  console.log(users)
+
   if (!users.length) {
     return
   }
@@ -323,7 +323,6 @@ const gameAwarding = async (
   await User.bulkWrite(
     users.map((user) => {
       const winAmount = roundMoney(user.betAmount * rate)
-      console.log('đâshjdasdhaskjdas')
       io.to(user.username).emit('game:refresh-user')
       return {
         updateOne: {
