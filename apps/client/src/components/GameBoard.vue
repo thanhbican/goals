@@ -1,9 +1,9 @@
 <template>
-  <section class="grid grid-cols-12 gap-4">
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-4 min-w-0">
     <div
       v-for="place in places"
       :key="place"
-      class="col-span-4"
+      class="min-w-0"
       :class="{
         // '': currentRollColor === place,
         // '':
@@ -12,7 +12,7 @@
       }"
     >
       <button
-        class="border border-white w-full"
+        class="border border-white w-full text-left"
         :class="{
           'cursor-pointer': !!isBetEnabled,
           'cursor-not-allowed': !!!isBetEnabled,
@@ -21,15 +21,15 @@
         @click="onBet(place)"
       >
         <div
-          class="flex justify-between items-center text-white p-4"
+          class="flex flex-col sm:flex-row md:flex-col xl:flex-row gap-3 justify-between items-stretch sm:items-center text-white p-3 sm:p-4 min-h-24"
           :class="{
             'bg-red': place === 'red',
             'bg-green': place === 'green',
             'bg-black': place === 'black',
           }"
         >
-          <div class="flex gap-x-2 items-center">
-            <p class="border border-solid p-2">
+          <div class="flex gap-2 items-center min-w-0">
+            <p class="border border-solid p-2 shrink-0 text-sm sm:text-base">
               {{
                 place === 'green'
                   ? '0'
@@ -38,7 +38,7 @@
                     : '1 to 7'
               }}
             </p>
-            <p class="flex items-center gap-x-2">
+            <p class="flex flex-wrap items-center gap-x-2 gap-y-1 min-w-0 text-sm sm:text-base [overflow-wrap:anywhere]">
               <span>{{ currentBet[place] ? 'Bet Placed:' : `Place bet` }}</span>
               <span v-if="currentBet[place]" class="flex items-center gap-x-2">
                 <img
@@ -53,13 +53,13 @@
               </span>
             </p>
           </div>
-          <p>{{ place === 'green' ? 'WIN 14x' : 'WIN 2x' }}</p>
+          <p class="font-bold whitespace-nowrap">{{ place === 'green' ? 'WIN 14x' : 'WIN 2x' }}</p>
         </div>
       </button>
 
-      <div class="bg-[rgba(0,0,0,.5)] text-[#c0c0c0] p-4">
-        <div class="flex justify-between items-center">
-          <h2>{{ betListTotal[place].length }} bets in totals</h2>
+      <div class="bg-[rgba(0,0,0,.5)] text-[#c0c0c0] p-3 sm:p-4">
+        <div class="flex justify-between items-center gap-3 min-w-0">
+          <h2 class="min-w-0 text-sm sm:text-base">{{ betListTotal[place].length }} bets in totals</h2>
           <div class="flex items-center gap-x-2">
             <img
               src="@/assets/money_img.svg"
@@ -85,9 +85,9 @@
           <li
             v-for="player in betList[place]"
             :key="player.username"
-            class="flex justify-between items-center"
+            class="flex justify-between items-center gap-3 min-w-0"
           >
-            <h3>{{ player.username }}</h3>
+            <h3 class="min-w-0 truncate">{{ player.username }}</h3>
             <p
               :class="{
                 'text-green': currentRollColor === place,

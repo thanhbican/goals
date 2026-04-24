@@ -1,19 +1,19 @@
 <template>
-  <div class="flex justify-end items-center gap-4">
-    <h1 class="font-bold text-xl">
+  <div class="flex justify-end items-center gap-2 sm:gap-4 text-sm sm:text-base min-w-0">
+    <h1 class="font-bold text-base sm:text-xl max-w-24 sm:max-w-none truncate">
       {{ user.username }}
     </h1>
-    <div class="flex items-center gap-x-2 border border-solid p-1">
+    <div class="flex items-center gap-x-2 border border-solid p-1 min-w-0">
       <img
         src="@/assets/money_img.svg"
         width="16"
         height="16"
         alt="money icon"
       />
-      <p>{{ user.balance }}</p>
+      <p class="max-w-20 truncate">{{ user.balance }}</p>
     </div>
 
-    <button class="btn btn-error text-white btn-sm" @click="logout">
+    <button class="btn btn-error text-white btn-sm min-h-10" @click="logout">
       Logout
     </button>
   </div>

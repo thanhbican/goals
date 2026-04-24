@@ -46,9 +46,11 @@ const rolling = (position: number) => {
 .roulette-overflow
   position: relative
   overflow: hidden
-  width: 600px
+  width: 100%
+  max-width: 600px
   margin: auto
   margin-top: 10px
+  border-radius: 4px
 
 .roulette-area
   background-image: url("@/assets/roulette_img.png")
@@ -69,4 +71,9 @@ const rolling = (position: number) => {
     margin: 0 auto
     left: 0
     right: 0
+
+@media (max-width: 480px)
+  .roulette-area
+    height: 60px
+    background-size: auto 60px
 </style>

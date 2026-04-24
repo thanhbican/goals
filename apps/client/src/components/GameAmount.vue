@@ -1,29 +1,29 @@
 <template>
-  <section class="flex justify-center items-center h-10">
-    <div class="flex border-2 border-grey border-solid">
+  <section class="flex justify-center items-center min-w-0">
+    <div class="flex flex-col sm:flex-row w-full sm:w-auto max-w-full border-2 border-grey border-solid bg-black">
       <label class="input-bet">
         <input
           v-model="state.betAmount"
           type="number"
           placeholder="Enter bet amount..."
-          class="h-10 w-full bg-black pl-8 pr-4 appearance-none border-r border-solid border-grey"
+          class="h-11 w-full sm:w-56 bg-black pl-8 pr-4 appearance-none border-b sm:border-b-0 sm:border-r border-solid border-grey"
           :class="{ 'is-invalid': !isBetAmountValid }"
         />
       </label>
-      <div class="bg-black h-10 space-x-4 text-xs flex items-center px-4">
-        <button class="bg-grey w-11 h-5" @click="clearBetAmount">CLEAR</button>
+      <div class="bg-black min-h-11 gap-2 text-xs grid grid-cols-4 min-[420px]:grid-cols-8 sm:flex sm:flex-wrap items-center justify-center px-2 py-2 sm:px-4">
+        <button class="bg-grey min-h-11 sm:min-h-9 min-w-0 sm:min-w-11 px-2" @click="clearBetAmount">CLEAR</button>
         <button
           v-for="increment in state.increments"
           :key="increment"
           @click="changeBetAmount(increment)"
-          class="bg-grey w-11 h-5"
+          class="bg-grey min-h-11 sm:min-h-9 min-w-0 sm:min-w-11 px-2"
         >
           +{{ increment }}
         </button>
 
-        <button class="bg-grey w-11 h-6" @click="halfBetAmount">1/2</button>
-        <button class="bg-grey w-11 h-5" @click="doubleBetAmount">x2</button>
-        <button class="bg-grey w-11 h-5" @click="maxBetAmount">Max</button>
+        <button class="bg-grey min-h-11 sm:min-h-9 min-w-0 sm:min-w-11 px-2" @click="halfBetAmount">1/2</button>
+        <button class="bg-grey min-h-11 sm:min-h-9 min-w-0 sm:min-w-11 px-2" @click="doubleBetAmount">x2</button>
+        <button class="bg-grey min-h-11 sm:min-h-9 min-w-0 sm:min-w-11 px-2" @click="maxBetAmount">Max</button>
       </div>
     </div>
   </section>

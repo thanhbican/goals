@@ -1,7 +1,7 @@
 <template>
   <section>
     <button
-      class="btn bg-transparent hover:bg-grey flex gap-x-2 items-center mr-10 cursor-pointer ml-auto"
+      class="btn min-h-11 bg-transparent hover:bg-grey flex gap-x-2 items-center mr-0 sm:mr-10 cursor-pointer ml-auto"
       @click="changeState"
     >
       <div>

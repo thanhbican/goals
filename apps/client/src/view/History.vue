@@ -1,19 +1,19 @@
 <template>
-  <section>
+  <section class="min-w-0">
     <div class="mb-4">
       <h2 class="text-2xl text-center">Roll History</h2>
       <p class="text-center text-xl">{{ currentDate }}</p>
     </div>
 
-    <ul v-if="rounds" class="gap-x-4 gap-y-4 grid grid-cols-10">
-      <li v-for="round in rounds" :key="round.id" class="mb-4 text-center">
+    <ul v-if="rounds" class="gap-x-2 gap-y-4 grid grid-cols-2 min-[360px]:grid-cols-3 sm:grid-cols-5 lg:grid-cols-10">
+      <li v-for="round in rounds" :key="round.id" class="mb-4 min-w-0 text-center">
         <div
-          class="w-16 h-16 mx-auto text-xl font-bold col-span-1 rounded-full flex items-center justify-center p-4 text-white"
+          class="w-14 h-14 sm:w-16 sm:h-16 mx-auto text-lg sm:text-xl font-bold col-span-1 rounded-full flex items-center justify-center p-4 text-white"
           :class="`bg-${round.rollColor}`"
         >
           <div>{{ round.roll }}</div>
         </div>
-        <div class="text-center mt-1 text-sm">Round: {{ round.roundId }}</div>
+        <div class="text-center mt-1 text-xs sm:text-sm truncate">Round: {{ round.roundId }}</div>
       </li>
     </ul>
   </section>

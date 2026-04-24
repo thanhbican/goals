@@ -1,7 +1,7 @@
 <template>
-  <section class="space-y-4 text-white">
-    <h2 class="text-xl font-bold text-white">ROULETTE TECHNICAL DETAILS</h2>
-    <div class="space-y-2 text-base">
+  <section class="space-y-4 text-white min-w-0">
+    <h2 class="text-lg sm:text-xl font-bold text-white">ROULETTE TECHNICAL DETAILS</h2>
+    <div class="space-y-2 text-sm sm:text-base leading-6 min-w-0">
       <p>
         Our system generates the result for each round by using the SHA-256 hash
         of 3 separate inputs
@@ -31,8 +31,8 @@
         >
         to test sha256
       </p>
-      <pre>
-        <div class="dark bg-gray-950 rounded-md border-[0.5px] border-token-border-medium">
+      <pre class="max-w-full overflow-x-auto whitespace-pre text-xs sm:text-sm rounded-md">
+        <div class="dark bg-gray-950 rounded-md border-[0.5px] border-token-border-medium p-3 w-max min-w-full">
         const serverSeed = '0ecb9d89c9936fbc42180cc1123079db17eb8dd833a6c5f3700e62c82ae69407'
         const publicSeed = '34161117192806361336'
         const roundId = '1'
@@ -50,8 +50,8 @@
     <div v-if="isLoading" class="w-full flex justify-center items-center">
       <span class="loading loading-spinner text-info"></span>
     </div>
-    <div v-else class="overflow-x-auto">
-      <table class="table">
+    <div v-else class="max-w-full overflow-x-auto">
+      <table class="table table-xs sm:table-md min-w-[720px]">
         <!-- head -->
         <thead>
           <tr>
@@ -64,14 +64,14 @@
         <tbody>
           <tr v-for="game in gameList?.games" :key="game.id">
             <td>{{ formatDate(game.date) }}</td>
-            <td :class="{ 'text-yellow-300': !game.serverSeed }">
+            <td class="max-w-[280px] break-all" :class="{ 'text-yellow-300': !game.serverSeed }">
               {{
                 game.serverSeed
                   ? game.serverSeed
                   : 'Please wait until the end of today'
               }}
             </td>
-            <td>{{ game.publicSeed }}</td>
+            <td class="break-all">{{ game.publicSeed }}</td>
             <td>
               <RouterLink :to="`/history/rounds/${game.id}`"
                 >Click here for all rounds</RouterLink
@@ -82,15 +82,31 @@
       </table>
     </div>
 
-    <div class="join">
+    <div v-if="gameList && gameList.totalPages > 1" class="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
       <button
-        v-for="(page, index) in gameList?.totalPages"
+        class="btn btn-sm sm:btn-md"
+        :disabled="gameList.page <= 1"
+        @click="goToPage(gameList.page - 1)"
+      >
+        Prev
+      </button>
+      <button
+        v-for="(page, index) in displayedPages"
         :key="index"
-        class="join-item btn"
-        :class="{ 'btn-active': page === gameList?.page }"
-        @click="fetchGameList(page)"
+        class="btn btn-sm sm:btn-md min-w-10"
+        :class="{ 'btn-active': page === gameList.page }"
+        :disabled="page === '…'"
+        :aria-current="page === gameList.page ? 'page' : undefined"
+        @click="typeof page === 'number' && goToPage(page)"
       >
         {{ page }}
+      </button>
+      <button
+        class="btn btn-sm sm:btn-md"
+        :disabled="gameList.page >= gameList.totalPages"
+        @click="goToPage(gameList.page + 1)"
+      >
+        Next
       </button>
     </div>
   </section>
@@ -99,17 +115,53 @@
 <script setup lang="ts">
 import { getGames } from '@/api/gameApi'
 import { formatDate } from '@/helper/util'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 import { GamesResponse } from '@/types/game'
 
 const gameList = ref<GamesResponse | null>(null)
 const isLoading = ref(false)
 
+const displayedPages = computed<(number | '…')[]>(() => {
+  if (!gameList.value) {
+    return []
+  }
+
+  const { page, totalPages } = gameList.value
+
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1)
+  }
+
+  const pages = new Set([1, totalPages, page - 1, page, page + 1])
+  const visiblePages = Array.from(pages)
+    .filter((item) => item >= 1 && item <= totalPages)
+    .sort((a, b) => a - b)
+
+  return visiblePages.reduce<(number | '…')[]>((result, item, index) => {
+    const previousPage = visiblePages[index - 1]
+
+    if (previousPage && item - previousPage > 1) {
+      result.push('…')
+    }
+
+    result.push(item)
+    return result
+  }, [])
+})
+
 const fetchGameList = async (page: number) => {
   isLoading.value = true
   gameList.value = await getGames(page)
   isLoading.value = false
+}
+
+const goToPage = async (page: number) => {
+  if (!gameList.value || page === gameList.value.page) {
+    return
+  }
+
+  await fetchGameList(page)
 }
 
 onMounted(async () => {

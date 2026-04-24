@@ -1,15 +1,15 @@
 <template>
-  <section class="bg-gray-100 p-8 rounded-lg shadow-md">
-    <h2 class="text-3xl font-bold text-center text-blue-500 mb-4">
+  <section class="bg-gray-100 p-4 sm:p-8 rounded-lg shadow-md min-w-0">
+    <h2 class="text-2xl sm:text-3xl font-bold text-center text-blue-500 mb-4">
       About Routtle
     </h2>
-    <p class="text-lg text-gray-700 mb-4">
+    <p class="text-base sm:text-lg text-gray-700 mb-4">
       Welcome to <span class="font-bold">S4md Routtle</span>!
     </p>
 
-    <h3 class="text-2xl font-bold text-blue-500 mb-2">Our Technology</h3>
+    <h3 class="text-xl sm:text-2xl font-bold text-blue-500 mb-2">Our Technology</h3>
 
-    <ul class="list-disc list-inside text-lg text-gray-700 mb-4">
+    <ul class="list-disc list-inside text-base sm:text-lg leading-7 text-gray-700 mb-4 space-y-2 break-words">
       <li>
         <span class="font-bold">Backend</span>: Powered by
         <span class="font-bold">Socket.io</span> for real-time communication,
@@ -27,14 +27,14 @@
       </li>
     </ul>
 
-    <h2 class="text-2xl font-bold text-blue-500 mb-2">Roadmap</h2>
-    <p class="text-lg text-gray-700 mb-4">
+    <h2 class="text-xl sm:text-2xl font-bold text-blue-500 mb-2">Roadmap</h2>
+    <p class="text-base sm:text-lg text-gray-700 mb-4">
       Upcoming updates include integrating
       <span class="font-bold">Redis</span> into our backend to enhance
       performance and scalability.
     </p>
 
-    <p class="text-lg italic mt-4 text-blue-500">
+    <p class="text-base sm:text-lg italic mt-4 text-blue-500">
       *This website is for educational purposes only, not for profiteering or
       illegal use.
     </p>
