@@ -5,6 +5,7 @@ interface RoundDoc extends Document {
   roll: number
   rollColor: string
   roundId: string
+  createdAt: Date
 }
 
 const roundSchema = new Schema(
