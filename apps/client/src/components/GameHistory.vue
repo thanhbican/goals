@@ -1,10 +1,10 @@
 <template>
-  <section class="min-h-8">
-    <ul v-if="historyRound" class="flex justify-center gap-x-4">
+  <section class="min-h-8 w-full">
+    <ul v-if="historyRound" class="flex w-full justify-center gap-x-1 sm:gap-x-4">
       <li
         v-for="round in historyRound"
         :key="round.id"
-        class="w-4 h-4 rounded-full flex items-center justify-center p-4 text-white"
+        class="w-6 h-6 sm:w-8 sm:h-8 shrink-0 rounded-full flex items-center justify-center text-xs sm:text-base text-white"
         :class="`bg-${round.rollColor}`"
       >
         {{ round.roll }}
