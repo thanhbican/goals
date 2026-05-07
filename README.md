@@ -2,6 +2,10 @@
 
 Personal Goals is a personal learning project for experimenting with real-time application development in a Turborepo monorepo. The project includes a Vue 3 client, an Express API, Socket.IO-based real-time features, and MongoDB persistence.
 
+## Live Demo
+
+Live demo: [https://game.s4md.com](https://game.s4md.com)
+
 ## Disclaimer
 
 This project is a personal learning project created to experiment with Socket.IO, WebSocket, and real-time application development. Although it may be inspired by roulette-style concepts, it is not designed, promoted, or intended for real-money gambling, commercial operation, or any malicious purpose.
